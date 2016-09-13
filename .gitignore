@@ -1,0 +1,6 @@
+.local
+*.RData
+*.Rhistory
+*.json
+*.npy
+summary
