@@ -3,4 +3,5 @@
 *.Rhistory
 *.json
 *.npy
+*.csv
 summary
