@@ -1,7 +1,7 @@
 # coding: utf-8
 
 # input pair of data and learn
-# this program focus on
+# this program focuses on
 # SV(Salinity causes velocity) and VS(Velocity causes Salinity)
 
 import numpy
@@ -43,7 +43,7 @@ def main():
 
     W2 = tf.transpose(W)  # 転置
     b2 = bias_variable([PIXELS], 'b2')
-    #y = tf.nn.relu(tf.matmul(h_drop, W2) + b2)
+    # y = tf.nn.relu(tf.matmul(h_drop, W2) + b2)
     y = tf.matmul(h_drop, W2) + b2
 
     loss = tf.nn.l2_loss(y - x) / BATCH_SIZE
@@ -55,8 +55,7 @@ def main():
     init = tf.initialize_all_variables()
     sess = tf.Session()
     sess.run(init)
-    summary_writer = tf.train.SummaryWriter('summary/l2_loss',
-                                            graph=sess.graph)
+    summary_writer = tf.train.SummaryWriter('summary/l2_loss', graph=sess.graph)
 
     for step in range(3001):
         sess.run(train_step,
