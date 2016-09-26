@@ -4,19 +4,17 @@
 # this program focuses on
 # SV(Salinity causes velocity) and VS(Velocity causes Salinity)
 
+import matplotlib.pyplot as plt
 import numpy
-
 import tensorflow as tf
 
 def weight_variable(shape, variable_name):
     initial = tf.truncated_normal(shape, stddev=0.1)
     return tf.Variable(initial, name=variable_name)
 
-
 def bias_variable(shape, variable_name):
     initial = tf.constant(0.1, shape=shape)
     return tf.Variable(initial, name=variable_name)
-
 
 def main():
     rawdata = numpy.load('ocean.normalized.npy')
@@ -24,7 +22,8 @@ def main():
                        dtype=numpy.float32)
     for i in range(rawdata.shape[0]):
         data[i, :rawdata.shape[2]] = rawdata[i, 0]          #   S(salinity)
-        data[i, rawdata.shape[2]:] = rawdata[i, 2]          #   V(flow velocity)
+        data[i, rawdata.shape[2]:] = rawdata[i, 1]          #   V(flow velocity)
+        # data[i, rawdata.shape[2]:] = rawdata[i, 2]          #   V(flow velocity)
 
     PIXELS = data.shape[1]
     H = 25
@@ -57,7 +56,7 @@ def main():
     sess.run(init)
     summary_writer = tf.train.SummaryWriter('summary/l2_loss', graph=sess.graph)
 
-    for step in range(3001):
+    for step in range(101):
         sess.run(train_step,
                  feed_dict={x: [data[step]], keep_prob: (1 - DROP_OUT_RATE)})
         summary_op = tf.merge_all_summaries()
@@ -70,6 +69,17 @@ def main():
 
     result = sess.run(W2)
     numpy.save('result.npy', result)
+
+
+    times = [i for i in range(PIXELS)]
+    # Draw Encode/Decode Result
+    for i in range(1):
+        print(data[0])
+        plt.plot(times, data[0], color='r', lw=2)
+        # plt.plot(times, data[1000], color='g', lw=1)
+    plt.show()
+    # plt.savefig("result.png")
+
 
 if __name__ == '__main__':
     main()
