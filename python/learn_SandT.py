@@ -47,8 +47,8 @@ def main():
     b2 = bias_variable([PIXELS], 'b2')
     y = tf.nn.relu(tf.matmul(h_drop, W2) + b2)
 
-    loss = tf.nn.l2_loss(y - x) / BATCH_SIZE
-
+    # loss = tf.nn.l2_loss(y - x) / BATCH_SIZE
+    loss = tf.reduce_mean(tf.square(y - x) * 10000)
     tf.scalar_summary("l2_loss", loss)
 
     train_step = tf.train.AdamOptimizer().minimize(loss)
@@ -66,10 +66,10 @@ def main():
         summary_str = sess.run(summary_op, feed_dict={x: inputdata, keep_prob: 1.0})
         summary_writer.add_summary(summary_str, step)
         if step % 100 == 0:
-            print(loss.eval(session=sess, feed_dict={x: inputdata, keep_prob: 1.0}))
+            print(step, loss.eval(session=sess, feed_dict={x: inputdata, keep_prob: 1.0}))
             times = [i for i in range(PIXELS)]
             output = y.eval(session=sess, feed_dict={x: inputdata, keep_prob: 1.0})
-        if step % 1000 == 0:
+        if step % 1000 == 0 and step != 0:
             times = [i for i in range(PIXELS)]
             output = y.eval(session=sess, feed_dict={x: inputdata, keep_prob: 1.0})
             plt.plot(times, inputdata[0], color='r', lw=2)
