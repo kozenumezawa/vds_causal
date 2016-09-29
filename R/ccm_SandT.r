@@ -9,8 +9,23 @@ determineEmbeddingDimension <- function(data) {
   plot(simplex_output$E, simplex_output$rho, type = "l", xlab = "Embedding Dimension (E)", ylab = "Forecast Skill (rho)")
 }
 
-data = fromJSON("../python/data.json")
+predictionDeacy <- function(data, Em) {
+  lib <- c(1, 50)
+  pred <- c(90, 212)  
+  simplex_output <- simplex(data, lib, pred, E = Em, tp = 1:10)
+  par(mar = c(4, 4, 1, 1))
+  plot(simplex_output$tp, simplex_output$rho, type = "l", xlab = "Time to Prediction (tp)", ylab = "Forecast Skill (rho)")
+}
 
+identifyingNonlinearity <- function(data, Em) {
+  lib <- c(1, 50)
+  pred <- c(90, 212)  
+  smap_output <- s_map(data, lib, pred, E=E_A)
+  par(mar = c(4, 4, 1, 1), mgp = c(2.5, 1, 0))
+  plot(smap_output$theta, smap_output$rho, type = "l", xlab = "Nonlinearity (theta)", ylab = "Forecast Skill (rho)")
+}
+
+data = fromJSON("../python/data.json")
 
 index <- 1
 Accm <- as.numeric(unlist(data$data[index,]$s))
@@ -28,22 +43,13 @@ determineEmbeddingDimension(Bccm)
 E_B = 5
 
 # Prediction Decay
-simplex_output <- simplex(Accm, lib, pred, E = E_A, tp = 1:10)
-par(mar = c(4, 4, 1, 1))
-plot(simplex_output$tp, simplex_output$rho, type = "l", xlab = "Time to Prediction (tp)", ylab = "Forecast Skill (rho)")
-
-simplex_output <- simplex(Bccm, lib, pred, E = E_B, tp = 1:10)
-par(mar = c(4, 4, 1, 1))
-plot(simplex_output$tp, simplex_output$rho, type = "l", xlab = "Time to Prediction (tp)", ylab = "Forecast Skill (rho)")
+predictionDeacy(data = Accm, Em = E_A)
+predictionDeacy(data = Bccm, Em = E_B)
 TAU = 1
-# Identifying Nonlinearity
-smap_output <- s_map(Accm, lib, pred, E=E_A)
-par(mar = c(4, 4, 1, 1), mgp = c(2.5, 1, 0))
-plot(smap_output$theta, smap_output$rho, type = "l", xlab = "Nonlinearity (theta)", ylab = "Forecast Skill (rho)")
 
-smap_output <- s_map(Bccm, lib, pred, E=E_B)
-par(mar = c(4, 4, 1, 1), mgp = c(2.5, 1, 0))
-plot(smap_output$theta, smap_output$rho, type = "l", xlab = "Nonlinearity (theta)", ylab = "Forecast Skill (rho)")
+# Identifying Nonlinearity
+identifyingNonlinearity(data = Accm, Em = E_A)
+identifyingNonlinearity(data = Bccm, Em = E_B)
 
 # CCM(use multispatialCCM)
 signal_A_out<-SSR_check_signal(A=Accm, E=E_A, tau=TAU, predsteplist=1:10)
@@ -73,22 +79,12 @@ determineEmbeddingDimension(Bccm)
 E_B = 1
 
 # Prediction Decay
-simplex_output <- simplex(Accm, lib, pred, E = E_A, tp = 1:10)
-par(mar = c(4, 4, 1, 1))
-plot(simplex_output$tp, simplex_output$rho, type = "l", xlab = "Time to Prediction (tp)", ylab = "Forecast Skill (rho)")
-
-simplex_output <- simplex(Bccm, lib, pred, E = E_B, tp = 1:10)
-par(mar = c(4, 4, 1, 1))
-plot(simplex_output$tp, simplex_output$rho, type = "l", xlab = "Time to Prediction (tp)", ylab = "Forecast Skill (rho)")
+predictionDeacy(data = Accm, Em = E_A)
+predictionDeacy(data = Bccm, Em = E_B)
 TAU = 2
 # Identifying Nonlinearity
-smap_output <- s_map(Accm, lib, pred, E=E_A)
-par(mar = c(4, 4, 1, 1), mgp = c(2.5, 1, 0))
-plot(smap_output$theta, smap_output$rho, type = "l", xlab = "Nonlinearity (theta)", ylab = "Forecast Skill (rho)")
-
-smap_output <- s_map(Bccm, lib, pred, E=E_B)
-par(mar = c(4, 4, 1, 1), mgp = c(2.5, 1, 0))
-plot(smap_output$theta, smap_output$rho, type = "l", xlab = "Nonlinearity (theta)", ylab = "Forecast Skill (rho)")
+identifyingNonlinearity(data = Accm, Em = E_A)
+identifyingNonlinearity(data = Bccm, Em = E_B)
 
 # CCM(use multispatialCCM)
 signal_A_out<-SSR_check_signal(A=Accm, E=E_A, tau=TAU, predsteplist=1:10)
@@ -118,22 +114,13 @@ determineEmbeddingDimension(Bccm)
 E_B = 3
 
 # Prediction Decay
-simplex_output <- simplex(Accm, lib, pred, E = E_A, tp = 1:10)
-par(mar = c(4, 4, 1, 1))
-plot(simplex_output$tp, simplex_output$rho, type = "l", xlab = "Time to Prediction (tp)", ylab = "Forecast Skill (rho)")
-
-simplex_output <- simplex(Bccm, lib, pred, E = E_B, tp = 1:10)
-par(mar = c(4, 4, 1, 1))
-plot(simplex_output$tp, simplex_output$rho, type = "l", xlab = "Time to Prediction (tp)", ylab = "Forecast Skill (rho)")
+predictionDeacy(data = Accm, Em = E_A)
+predictionDeacy(data = Bccm, Em = E_B)
 TAU = 1
-# Identifying Nonlinearity
-smap_output <- s_map(Accm, lib, pred, E=E_A)
-par(mar = c(4, 4, 1, 1), mgp = c(2.5, 1, 0))
-plot(smap_output$theta, smap_output$rho, type = "l", xlab = "Nonlinearity (theta)", ylab = "Forecast Skill (rho)")
 
-smap_output <- s_map(Bccm, lib, pred, E=E_B)
-par(mar = c(4, 4, 1, 1), mgp = c(2.5, 1, 0))
-plot(smap_output$theta, smap_output$rho, type = "l", xlab = "Nonlinearity (theta)", ylab = "Forecast Skill (rho)")
+# Identifying Nonlinearity
+identifyingNonlinearity(data = Accm, Em = E_A)
+identifyingNonlinearity(data = Bccm, Em = E_B)
 
 # CCM(use multispatialCCM)
 signal_A_out<-SSR_check_signal(A=Accm, E=E_A, tau=TAU, predsteplist=1:10)
@@ -163,22 +150,13 @@ determineEmbeddingDimension(Bccm)
 E_B = 2
 
 # Prediction Decay
-simplex_output <- simplex(Accm, lib, pred, E = E_A, tp = 1:10)
-par(mar = c(4, 4, 1, 1))
-plot(simplex_output$tp, simplex_output$rho, type = "l", xlab = "Time to Prediction (tp)", ylab = "Forecast Skill (rho)")
-
-simplex_output <- simplex(Bccm, lib, pred, E = E_B, tp = 1:10)
-par(mar = c(4, 4, 1, 1))
-plot(simplex_output$tp, simplex_output$rho, type = "l", xlab = "Time to Prediction (tp)", ylab = "Forecast Skill (rho)")
+predictionDeacy(data = Accm, Em = E_A)
+predictionDeacy(data = Bccm, Em = E_B)
 TAU = 1
-# Identifying Nonlinearity
-smap_output <- s_map(Accm, lib, pred, E=E_A)
-par(mar = c(4, 4, 1, 1), mgp = c(2.5, 1, 0))
-plot(smap_output$theta, smap_output$rho, type = "l", xlab = "Nonlinearity (theta)", ylab = "Forecast Skill (rho)")
 
-smap_output <- s_map(Bccm, lib, pred, E=E_B)
-par(mar = c(4, 4, 1, 1), mgp = c(2.5, 1, 0))
-plot(smap_output$theta, smap_output$rho, type = "l", xlab = "Nonlinearity (theta)", ylab = "Forecast Skill (rho)")
+# Identifying Nonlinearity
+identifyingNonlinearity(data = Accm, Em = E_A)
+identifyingNonlinearity(data = Bccm, Em = E_B)
 
 # CCM(use multispatialCCM)
 signal_A_out<-SSR_check_signal(A=Accm, E=E_A, tau=TAU, predsteplist=1:10)
@@ -208,22 +186,13 @@ determineEmbeddingDimension(Bccm)
 E_B = 2
 
 # Prediction Decay
-simplex_output <- simplex(Accm, lib, pred, E = E_A, tp = 1:10)
-par(mar = c(4, 4, 1, 1))
-plot(simplex_output$tp, simplex_output$rho, type = "l", xlab = "Time to Prediction (tp)", ylab = "Forecast Skill (rho)")
-
-simplex_output <- simplex(Bccm, lib, pred, E = E_B, tp = 1:10)
-par(mar = c(4, 4, 1, 1))
-plot(simplex_output$tp, simplex_output$rho, type = "l", xlab = "Time to Prediction (tp)", ylab = "Forecast Skill (rho)")
+predictionDeacy(data = Accm, Em = E_A)
+predictionDeacy(data = Bccm, Em = E_B)
 TAU = 1
-# Identifying Nonlinearity
-smap_output <- s_map(Accm, lib, pred, E=E_A)
-par(mar = c(4, 4, 1, 1), mgp = c(2.5, 1, 0))
-plot(smap_output$theta, smap_output$rho, type = "l", xlab = "Nonlinearity (theta)", ylab = "Forecast Skill (rho)")
 
-smap_output <- s_map(Bccm, lib, pred, E=E_B)
-par(mar = c(4, 4, 1, 1), mgp = c(2.5, 1, 0))
-plot(smap_output$theta, smap_output$rho, type = "l", xlab = "Nonlinearity (theta)", ylab = "Forecast Skill (rho)")
+# Identifying Nonlinearity
+identifyingNonlinearity(data = Accm, Em = E_A)
+identifyingNonlinearity(data = Bccm, Em = E_B)
 
 # CCM(use multispatialCCM)
 signal_A_out<-SSR_check_signal(A=Accm, E=E_A, tau=TAU, predsteplist=1:10)
@@ -253,14 +222,10 @@ determineEmbeddingDimension(Bccm)
 E_B = 1
 
 # Prediction Decay
-simplex_output <- simplex(Accm, lib, pred, E = E_A, tp = 1:10)
-par(mar = c(4, 4, 1, 1))
-plot(simplex_output$tp, simplex_output$rho, type = "l", xlab = "Time to Prediction (tp)", ylab = "Forecast Skill (rho)")
-
-simplex_output <- simplex(Bccm, lib, pred, E = E_B, tp = 1:10)
-par(mar = c(4, 4, 1, 1))
-plot(simplex_output$tp, simplex_output$rho, type = "l", xlab = "Time to Prediction (tp)", ylab = "Forecast Skill (rho)")
+predictionDeacy(data = Accm, Em = E_A)
+predictionDeacy(data = Bccm, Em = E_B)
 TAU = 1
+
 # Identifying Nonlinearity
 smap_output <- s_map(Accm, lib, pred, E=E_A)
 par(mar = c(4, 4, 1, 1), mgp = c(2.5, 1, 0))
