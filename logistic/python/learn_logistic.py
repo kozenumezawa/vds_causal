@@ -1,5 +1,6 @@
 # coding: utf-8
 
+import matplotlib.pyplot as plt
 import numpy
 import csv
 import tensorflow as tf
@@ -15,6 +16,8 @@ def bias_variable(shape, variable_name):
 
 rawdata = numpy.load('../npy/input_logistic_data.npy')
 
+rawdata = numpy.load('../npy/input_logistic_data.npy')
+
 # (10000,2,100)→(10000,200)  (to learn causality)
 inputdata = numpy.zeros((rawdata.shape[0], rawdata.shape[2] * rawdata.shape[1]), dtype=numpy.float32)
 for i in range(rawdata.shape[0]):
@@ -26,15 +29,15 @@ TIME_STEP_2 = inputdata.shape[1]
 
 x = tf.placeholder(tf.float32, [BATCH_SIZE, TIME_STEP_2], name='x')
 
-MIDDLE_UNIT = 30
+MIDDLE_UNIT = 20
 W = weight_variable((TIME_STEP_2, MIDDLE_UNIT), 'W')
 b1 = bias_variable([MIDDLE_UNIT], 'b1')
 
 DROP_OUT_RATE = 0.5
 
-# h = tf.nn.softsign(tf.matmul(x, W) + b1)
+h = tf.nn.softsign(tf.matmul(x, W) + b1)
 # h = tf.matmul(x, W) + b1
-h = tf.nn.sigmoid(tf.matmul(x, W) + b1)
+# h = tf.nn.sigmoid(tf.matmul(x, W) + b1)
 
 keep_prob = tf.placeholder("float", name='keep_prob')
 h_drop = tf.nn.dropout(h, keep_prob)
@@ -43,7 +46,8 @@ W2 = tf.transpose(W)  # 転置
 b2 = bias_variable([TIME_STEP_2], 'b2')
 y = tf.nn.relu(tf.matmul(h_drop, W2) + b2)
 
-loss = tf.nn.l2_loss(y - x) / BATCH_SIZE
+# loss = tf.nn.l2_loss(y - x) / BATCH_SIZE
+loss = tf.reduce_mean(tf.square(y - x) * 100)
 
 tf.scalar_summary("l2_loss", loss)
 
@@ -54,7 +58,7 @@ sess = tf.Session()
 sess.run(init)
 summary_writer = tf.train.SummaryWriter('summary/l2_loss', graph_def=sess.graph_def)
 
-DATA_NUM = 3000
+DATA_NUM = 2001
 # trainning loop
 for step in range(DATA_NUM):
     sess.run(train_step,
@@ -65,6 +69,12 @@ for step in range(DATA_NUM):
     if step % 100 == 0:
         train_accuracy = loss.eval(session=sess, feed_dict={x: [inputdata[step]], keep_prob: 1.0})
         print("step %d:%g" % (step, train_accuracy))
+    if step % 1000 == 0 and step != 0:
+        times = [i for i in range(TIME_STEP_2)]
+        output = y.eval(session=sess, feed_dict={x: [inputdata[0]], keep_prob: 1.0})
+        plt.plot(times, inputdata[0], color='r', lw=2)
+        plt.plot(times, output[0], color='g', lw=1)
+        plt.show()
 
 
 # # Write input and output data to compare them in order to check accuracy
