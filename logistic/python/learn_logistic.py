@@ -14,10 +14,16 @@ def bias_variable(shape, variable_name):
     initial = tf.constant(0.1, shape=shape)
     return tf.Variable(initial, name=variable_name)
 
-rawdata = numpy.load('../npy/input_logistic_data.npy')
+# load test data
+testrawdata = numpy.load('../npy/input_test_data.npy')
+testdata = numpy.zeros((testrawdata.shape[0], testrawdata.shape[2] * testrawdata.shape[1]), dtype=numpy.float32)
+for i in range(testrawdata.shape[0]):
+    testdata[i,:testrawdata.shape[2]] = testrawdata[i, 0]       #   X
+    testdata[i, testrawdata.shape[2]:] = testrawdata[i, 1]      #   Y
+print(testdata.shape)
 
+# load trainning data
 rawdata = numpy.load('../npy/input_logistic_data.npy')
-
 # (10000,2,100)→(10000,200)  (to learn causality)
 inputdata = numpy.zeros((rawdata.shape[0], rawdata.shape[2] * rawdata.shape[1]), dtype=numpy.float32)
 for i in range(rawdata.shape[0]):
@@ -59,6 +65,7 @@ sess.run(init)
 summary_writer = tf.train.SummaryWriter('summary/l2_loss', graph_def=sess.graph_def)
 
 DATA_NUM = 2001
+times = [i for i in range(TIME_STEP_2)]
 # trainning loop
 for step in range(DATA_NUM):
     sess.run(train_step,
@@ -69,13 +76,27 @@ for step in range(DATA_NUM):
     if step % 100 == 0:
         train_accuracy = loss.eval(session=sess, feed_dict={x: [inputdata[step]], keep_prob: 1.0})
         print("step %d:%g" % (step, train_accuracy))
-    if step % 1000 == 0 and step != 0:
-        times = [i for i in range(TIME_STEP_2)]
-        output = y.eval(session=sess, feed_dict={x: [inputdata[0]], keep_prob: 1.0})
-        plt.plot(times, inputdata[0], color='r', lw=2)
-        plt.plot(times, output[0], color='g', lw=1)
-        plt.show()
+    # if step % 1000 == 0 and step != 0:
+    #     output = y.eval(session=sess, feed_dict={x: [inputdata[0]], keep_prob: 1.0})
+    #     plt.plot(times, inputdata[0], color='r', lw=2)
+    #     plt.plot(times, output[0], color='g', lw=1)
+    #     plt.show()
 
+plt.subplot(2, 1, 1)
+output = y.eval(session=sess, feed_dict={x: [testdata[0]], keep_prob: 1.0})
+plt.plot(times, testdata[0], color='r', lw=2)
+plt.plot(times, output[0], color='g', lw=1)
+
+plt.subplot(2, 1, 2)
+output = y.eval(session=sess, feed_dict={x: [testdata[8]], keep_prob: 1.0})
+plt.plot(times, testdata[8], color='r', lw=2)
+plt.plot(times, output[0], color='g', lw=1)
+
+# plt.subplot(3, 2, 3)
+# plt.subplot(3, 2, 4)
+# plt.subplot(3, 2, 5)
+# plt.subplot(3, 2, 6)
+plt.show()
 
 # # Write input and output data to compare them in order to check accuracy
 # f = open('../csv/result_to_compare_logistic.csv', 'w')
