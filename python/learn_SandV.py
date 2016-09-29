@@ -60,26 +60,35 @@ def main():
     sess.run(init)
     summary_writer = tf.train.SummaryWriter('summary/l2_loss', graph=sess.graph)
 
-    for step in range(5001):
+    for step in range(3001):
         inputdata = numpy.array([sv[step], vs[step]])
         sess.run(train_step, feed_dict={x: inputdata, keep_prob: (1 - DROP_OUT_RATE)})
         summary_op = tf.merge_all_summaries()
         summary_str = sess.run(summary_op, feed_dict={x: inputdata, keep_prob: 1.0})
         summary_writer.add_summary(summary_str, step)
         if step % 100 == 0:
-            print(loss.eval(session=sess, feed_dict={x: inputdata, keep_prob: 1.0}))
+            print('%d:%f' %(step, loss.eval(session=sess, feed_dict={x: inputdata, keep_prob: 1.0})))
             times = [i for i in range(PIXELS)]
             output = y.eval(session=sess, feed_dict={x: inputdata, keep_prob: 1.0})
-        if step % 1000 == 0:
-            times = [i for i in range(PIXELS)]
-            output = y.eval(session=sess, feed_dict={x: inputdata, keep_prob: 1.0})
-            plt.subplot(2, 1, 1)
-            plt.plot(times, inputdata[0], color='r', lw=2)
-            plt.plot(times, output[0], color='g', lw=1)
-            plt.subplot(2, 1, 2)
-            plt.plot(times, inputdata[1], color='r', lw=2)
-            plt.plot(times, output[1], color='g', lw=1)
-            plt.show()
+        # if step % 1000 == 0:
+        #     times = [i for i in range(PIXELS)]
+        #     output = y.eval(session=sess, feed_dict={x: inputdata, keep_prob: 1.0})
+        #     plt.subplot(2, 1, 1)
+        #     plt.plot(times, inputdata[0], color='r', lw=2)
+        #     plt.plot(times, output[0], color='g', lw=1)
+        #     plt.subplot(2, 1, 2)
+        #     plt.plot(times, inputdata[1], color='r', lw=2)
+        #     plt.plot(times, output[1], color='g', lw=1)
+        #     plt.show()
+    times = [i for i in range(PIXELS)]
+    output = y.eval(session=sess, feed_dict={x: inputdata, keep_prob: 1.0})
+    plt.subplot(2, 1, 1)
+    plt.plot(times, inputdata[0], color='r', lw=2)
+    plt.plot(times, output[0], color='g', lw=1)
+    plt.subplot(2, 1, 2)
+    plt.plot(times, inputdata[1], color='r', lw=2)
+    plt.plot(times, output[1], color='g', lw=1)
+    plt.show()
     result = sess.run(W2)
     numpy.save('result.npy', result)
 

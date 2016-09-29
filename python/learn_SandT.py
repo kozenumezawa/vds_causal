@@ -85,16 +85,5 @@ def main():
     result = sess.run(W2)
     numpy.save('result.npy', result)
 
-
-    # times = [i for i in range(PIXELS)]
-    # Draw Encode/Decode Result
-    # for i in range(1):
-    #     print(data[0])
-    #     plt.plot(times, data[0], color='r', lw=2)
-    #     plt.plot(times, data[1], color='g', lw=1)
-    # plt.show()
-    # plt.savefig("result.png")
-
-
 if __name__ == '__main__':
     main()
