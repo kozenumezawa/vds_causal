@@ -31,7 +31,7 @@ def main():
 
     # print(st.shape) = (10100, 424)
     PIXELS = data.shape[1]  # = 424
-    H = 70
+    H = 25
     BATCH_SIZE = 2
     DROP_OUT_RATE = 0.5
 
@@ -40,8 +40,9 @@ def main():
     W = weight_variable((PIXELS, H), 'W')
     b1 = bias_variable([H], 'b1')
 
-    # h = tf.nn.softsign(tf.matmul(x, W) + b1)
-    h = tf.matmul(x, W) + b1
+    h = tf.nn.softsign(tf.matmul(x, W) + b1)
+    # h = tf.nn.sigmoid(tf.matmul(x, W) + b1)
+    # h = tf.matmul(x, W) + b1
     keep_prob = tf.placeholder("float", name='keep_prob')
     h_drop = tf.nn.dropout(h, keep_prob)
 
@@ -61,7 +62,6 @@ def main():
     summary_writer = tf.train.SummaryWriter('summary/l2_loss', graph=sess.graph)
 
     for step in range(5001):
-
         inputdata = numpy.array([st[step], ts[step]])
         sess.run(train_step,
                  feed_dict={x: inputdata, keep_prob: (1 - DROP_OUT_RATE)})
@@ -81,7 +81,7 @@ def main():
             plt.subplot(2, 1, 2)
             plt.plot(times, inputdata[1], color='r', lw=2)
             plt.plot(times, output[1], color='g', lw=1)
-            # plt.show()
+            plt.show()
     result = sess.run(W2)
     numpy.save('result.npy', result)
 
