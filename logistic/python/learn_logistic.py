@@ -20,7 +20,6 @@ testdata = numpy.zeros((testrawdata.shape[0], testrawdata.shape[2] * testrawdata
 for i in range(testrawdata.shape[0]):
     testdata[i,:testrawdata.shape[2]] = testrawdata[i, 0]       #   X
     testdata[i, testrawdata.shape[2]:] = testrawdata[i, 1]      #   Y
-print(testdata.shape)
 
 # load trainning data
 rawdata = numpy.load('../npy/input_logistic_data.npy')
@@ -35,20 +34,21 @@ TIME_STEP_2 = inputdata.shape[1]
 
 x = tf.placeholder(tf.float32, [BATCH_SIZE, TIME_STEP_2], name='x')
 
-MIDDLE_UNIT = 20
-W = weight_variable((TIME_STEP_2, MIDDLE_UNIT), 'W')
+MIDDLE_UNIT = 25
+W1 = weight_variable((TIME_STEP_2, MIDDLE_UNIT), 'W1')
 b1 = bias_variable([MIDDLE_UNIT], 'b1')
 
 DROP_OUT_RATE = 0.5
 
-h = tf.nn.softsign(tf.matmul(x, W) + b1)
+h = tf.nn.softsign(tf.matmul(x, W1) + b1)
 # h = tf.matmul(x, W) + b1
 # h = tf.nn.sigmoid(tf.matmul(x, W) + b1)
 
 keep_prob = tf.placeholder("float", name='keep_prob')
 h_drop = tf.nn.dropout(h, keep_prob)
 
-W2 = tf.transpose(W)  # 転置
+W2 = tf.transpose(W1)  # 転置
+#W2 = weight_variable((MIDDLE_UNIT, TIME_STEP_2), 'W2')
 b2 = bias_variable([TIME_STEP_2], 'b2')
 y = tf.nn.relu(tf.matmul(h_drop, W2) + b2)
 
@@ -64,7 +64,7 @@ sess = tf.Session()
 sess.run(init)
 summary_writer = tf.train.SummaryWriter('summary/l2_loss', graph_def=sess.graph_def)
 
-DATA_NUM = 2001
+DATA_NUM = 3001
 times = [i for i in range(TIME_STEP_2)]
 # trainning loop
 for step in range(DATA_NUM):
@@ -81,55 +81,12 @@ for step in range(DATA_NUM):
     #     plt.plot(times, inputdata[0], color='r', lw=2)
     #     plt.plot(times, output[0], color='g', lw=1)
     #     plt.show()
-
-plt.subplot(2, 1, 1)
-output = y.eval(session=sess, feed_dict={x: [testdata[0]], keep_prob: 1.0})
-plt.plot(times, testdata[0], color='r', lw=2)
-plt.plot(times, output[0], color='g', lw=1)
-
-plt.subplot(2, 1, 2)
-output = y.eval(session=sess, feed_dict={x: [testdata[8]], keep_prob: 1.0})
-plt.plot(times, testdata[8], color='r', lw=2)
-plt.plot(times, output[0], color='g', lw=1)
-
-# plt.subplot(3, 2, 3)
-# plt.subplot(3, 2, 4)
-# plt.subplot(3, 2, 5)
-# plt.subplot(3, 2, 6)
-plt.show()
-
-# # Write input and output data to compare them in order to check accuracy
-# f = open('../csv/result_to_compare_logistic.csv', 'w')
-# writer = csv.writer(f)
-# for step in range(DATA_NUM):
-#     one_input = [inputdata[step]]
-#     one_output = sess.run(y,feed_dict={x: one_input, keep_prob: 1.0})     #   get output y
-#     writer.writerows(one_input)
-#     writer.writerows(one_output)
-#
-# # Write weights W
-# result = sess.run(W)
-# numpy.save('../npy/result_W_logistic.npy', result)
-# f = open('../csv/result_W_logistic.csv', 'w')
-# writer = csv.writer(f)
-# for step in range(TIME_STEP_2):
-#     result_w = result[step].tolist()
-#     writer.writerows([result_w])
-#
-# # Write bias b1
-# result = sess.run(b1)
-# numpy.save('../npy/result_b1_logistic.npy', result)
-# f = open('../csv/result_b1_logistic.csv', 'w')
-# writer = csv.writer(f)
-# for step in range(MIDDLE_UNIT):
-#     result_b = result[step].tolist()
-#     writer.writerows([[result_b]])
-#
-# # Write bias b2
-# result = sess.run(b2)
-# numpy.save('../npy/result_b2_logistic.npy', result)
-# f = open('../csv/result_b2_logistic.csv', 'w')
-# writer = csv.writer(f)
-# for step in range(TIME_STEP_2):
-#     result_b = result[step].tolist()
-#     writer.writerows([[result_b]])
+# write trainning result
+result_W1 = sess.run(W1)
+numpy.save('../npy/result_W1.npy', result_W1)
+result_b1 = sess.run(b1)
+numpy.save('../npy/result_b1.npy', result_b1)
+result_W2 = sess.run(W2)
+numpy.save('../npy/result_W2.npy', result_W2)
+result_b2 = sess.run(b2)
+numpy.save('../npy/result_b2.npy', result_b2)
