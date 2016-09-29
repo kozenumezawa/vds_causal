@@ -12,11 +12,7 @@ data = []
 while(b < 0.9):
     divergence_flag = True
     while(divergence_flag):
-        name = '../csv/inputdata_b_0_' + str(int(floor(b*10))) + '.csv'
-        f = open(name, 'w')
-        writer = csv.writer(f)
         divergence_flag = False
-
         X = []
         Y = []
         X.append(initial)
@@ -28,3 +24,5 @@ while(b < 0.9):
                 divergence_flag = True
         data.append([X, Y])
         b = (floor(b * 10) + 1) / 10
+npdata = np.array(data)
+np.save('../npy/input_test_data.npy', npdata)
