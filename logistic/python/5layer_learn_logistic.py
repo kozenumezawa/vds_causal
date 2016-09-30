@@ -68,9 +68,9 @@ train_step = tf.train.AdamOptimizer().minimize(loss)
 init = tf.initialize_all_variables()
 sess = tf.Session()
 sess.run(init)
-summary_writer = tf.train.SummaryWriter('summary/l2_loss', graph_def=sess.graph_def)
+summary_writer = tf.train.SummaryWriter('summary/l2_loss', graph=sess.graph)
 
-DATA_NUM = 3001
+DATA_NUM = 5001
 times = [i for i in range(TIME_STEP_2)]
 # trainning loop
 for step in range(DATA_NUM):

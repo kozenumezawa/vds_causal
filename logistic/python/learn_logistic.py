@@ -34,7 +34,7 @@ TIME_STEP_2 = inputdata.shape[1]
 
 x = tf.placeholder(tf.float32, [BATCH_SIZE, TIME_STEP_2], name='x')
 
-MIDDLE_UNIT = 25
+MIDDLE_UNIT = 20
 W1 = weight_variable((TIME_STEP_2, MIDDLE_UNIT), 'W1')
 b1 = bias_variable([MIDDLE_UNIT], 'b1')
 
@@ -62,7 +62,7 @@ train_step = tf.train.AdamOptimizer().minimize(loss)
 init = tf.initialize_all_variables()
 sess = tf.Session()
 sess.run(init)
-summary_writer = tf.train.SummaryWriter('summary/l2_loss', graph_def=sess.graph_def)
+summary_writer = tf.train.SummaryWriter('summary/l2_loss', graph=sess.graph)
 
 DATA_NUM = 3001
 times = [i for i in range(TIME_STEP_2)]
