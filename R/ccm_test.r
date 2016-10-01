@@ -103,7 +103,7 @@ for (i in 1 : X_N) {
   }
 }
 
-# create twin surrogates datacheckHavingTwin <- function(i, R) {
+checkHavingTwin <- function(i, R) {
   N <- length(R[1,])
   for(j in 1 : N) {
     twin_flag <- TRUE
@@ -119,3 +119,77 @@ for (i in 1 : X_N) {
   return (FALSE)
 }
 
+selectTwinIndex <- function(i, R) {
+  twin <- c(i)
+  N <- length(R[1,])
+  for(j in 1 : N) {
+    twin_flag <- TRUE
+    for (k in 1 : N) {
+      if (R[i,k] != R[j,k]) {
+        twin_flag <- FALSE
+      }
+    }
+    if (twin_flag == TRUE) {
+      twin <- append(twin, j)
+    }
+  }
+  random_index <- floor(runif(1, min=1, max=length(twin)+0.99999999))
+  return (twin[random_index] + 1)
+}
+
+# create twin surrogates data
+SURROGATE_N <- 10
+x_s_bundle <- array(0, dim=c(SURROGATE_N, dim(x)))
+for(surrogate_index in 1 : SURROGATE_N) {
+  x_s <- array(0, dim=dim(x))
+  # サロゲートデータを作るのに失敗することがあるので、100回試す
+  for (try_number in 1 : 100) {
+    before_index <- floor(runif(1, min=1, max=X_N+0.99999999))
+    x_s[1,] <- x[before_index,]
+    for (i in 2 : X_N) {
+      if(checkHavingTwin(before_index, R)) {
+        before_index <- selectTwinIndex(before_index, R)
+      } else {
+        before_index <- before_index + 1
+      }
+      if(before_index > X_N) {
+        break
+      }
+      x_s[i,] <- x[before_index]
+    }
+    if(i == X_N) {
+      break # surrogate dataの生成成功
+    }  
+  }
+  x_s_bundle[surrogate_index, , ] <- x_s  
+}
+
+# create time series data from surrogate data
+test_data_bundle <- array(0, c(SURROGATE_N, length(Accm)))
+for(surrogate_index in 1 : SURROGATE_N) {
+  surrogate_data <- x_s_bundle[surrogate_index, ,]
+  time_series_data <- array(0, c(length(Accm)))
+  # 時系列データ→trajectory vectorの逆操作
+  for (t in 1 : X_N) {
+    for(j in 1:X_DIM) {
+      time_series_data[(t + BACK_MAX) - (j - 1) * TAU] <- surrogate_data[t,j]
+    }
+  }
+  test_data_bundle[surrogate_index, ] <- time_series_data
+}
+# show data
+# plot(test_data_bundle[4,], type="l", col=1, lwd=2, xlim=c(0, 212), ylim=c(0,1), xlab="time step", ylab="Normalized Value", cex.lab = 1.5)
+
+# conduct a test and calculate p value
+calculateCCMrho(Accm = Accm, Bccm = Bccm, E_A = E_A, E_B = E_B, TAU = TAU)
+for(surrogate_index in 1 : SURROGATE_N) {
+  print(calculateCCMrho(Accm = test_data_bundle[surrogate_index, ], Bccm = Bccm, E_A = E_A, E_B = E_B, TAU = TAU))
+}
+
+calculateCCMrho <- function(Accm, Bccm, E_A, E_B, TAU) {
+  Accm_Bccm <- data.frame(Accm=Accm, Bccm=Bccm)
+  Bccm_xmap_Accm <- ccm(Accm_Bccm, E = E_B, lib_column = "Bccm", tau = TAU,
+                        target_column = "Accm", lib_sizes = seq(10, 200, by = 10), random_libs = TRUE)
+  Bccm_xmap_Accm_means <- ccm_means(Bccm_xmap_Accm)
+  return (Bccm_xmap_Accm_means$rho[length(Bccm_xmap_Accm_means$rho)])
+}
