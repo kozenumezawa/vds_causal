@@ -103,4 +103,19 @@ for (i in 1 : X_N) {
   }
 }
 
-# create twin surrogates data
+# create twin surrogates datacheckHavingTwin <- function(i, R) {
+  N <- length(R[1,])
+  for(j in 1 : N) {
+    twin_flag <- TRUE
+    for (k in 1 : N) {
+      if (R[i,k] != R[j,k]) {
+        twin_flag <- FALSE
+      }
+    }
+    if (twin_flag == TRUE) {
+      return (TRUE)
+    }
+  }
+  return (FALSE)
+}
+
