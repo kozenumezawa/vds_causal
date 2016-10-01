@@ -36,16 +36,16 @@ predictionDeacy <- function(data, Em) {
 identifyingNonlinearity <- function(data, Em) {
   lib <- c(1, 50)
   pred <- c(90, 212)  
-  smap_output <- s_map(data, lib, pred, E=E_A)
+  smap_output <- s_map(data, lib, pred, E=Em)
   par(mar = c(4, 4, 1, 1), mgp = c(2.5, 1, 0))
   plot(smap_output$theta, smap_output$rho, type = "l", xlab = "Nonlinearity (theta)", ylab = "Forecast Skill (rho)")
 }
 
-drawCCM <- function(Accm, Bccm, E_A, E_B, TAU) {
+drawCCM <- function(Accm, Bccm, Em, TAU) {
   Accm_Bccm <- data.frame(Accm=Accm, Bccm=Bccm)
-  Accm_xmap_Bccm <- ccm(Accm_Bccm, E = E_A, lib_column = "Accm", tau = TAU,
+  Accm_xmap_Bccm <- ccm(Accm_Bccm, E = Em, lib_column = "Accm", tau = TAU,
                         target_column = "Bccm", lib_sizes = seq(10, 200, by = 10), random_libs = TRUE)
-  Bccm_xmap_Accm <- ccm(Accm_Bccm, E = E_B, lib_column = "Bccm", tau = TAU,
+  Bccm_xmap_Accm <- ccm(Accm_Bccm, E = Em, lib_column = "Bccm", tau = TAU,
                         target_column = "Accm", lib_sizes = seq(10, 200, by = 10), random_libs = TRUE)
   Accm_xmap_Bccm_means <- ccm_means(Accm_xmap_Bccm)
   Bccm_xmap_Accm_means <- ccm_means(Bccm_xmap_Accm)
@@ -64,17 +64,18 @@ Bccm <- as.numeric(unlist(data$data[index,]$t))
 # show data
 showdata(Accm, Bccm)
 # determine Embedding Dimension
-E_A <- determineEmbeddingDimension(Accm)
-E_B <- determineEmbeddingDimension(Bccm)
+determineEmbeddingDimension(Accm)
+determineEmbeddingDimension(Bccm)
+E <- 5
 # Prediction Decay
-predictionDeacy(data = Accm, Em = E_A)
-predictionDeacy(data = Bccm, Em = E_B)
+predictionDeacy(data = Accm, Em = E)
+predictionDeacy(data = Bccm, Em = E)
 TAU = 1
 # Identifying Nonlinearity
-identifyingNonlinearity(data = Accm, Em = E_A)
-identifyingNonlinearity(data = Bccm, Em = E_B)
+identifyingNonlinearity(data = Accm, Em = E)
+identifyingNonlinearity(data = Bccm, Em = E)
 # draw CCM
-drawCCM(Accm = Accm, Bccm = Bccm, E_A = E_A, E_B = E_B, TAU = TAU)
+drawCCM(Accm = Accm, Bccm = Bccm, E = E, TAU = TAU)
 
 #---twin surrogate---
 Heaviside <- function(x) {
@@ -84,7 +85,7 @@ Heaviside <- function(x) {
   return (0)
 }
 # create trajectory vector form attractor
-X_DIM <- E_A
+X_DIM <- E
 BACK_MAX <- (X_DIM - 1) * TAU
 X_N <- length(Accm) - BACK_MAX # length of x
 x <- array(0, dim=c(X_N, X_DIM))
@@ -138,7 +139,7 @@ selectTwinIndex <- function(i, R) {
 }
 
 # create twin surrogates data
-SURROGATE_N <- 10
+SURROGATE_N <- 100
 x_s_bundle <- array(0, dim=c(SURROGATE_N, dim(x)))
 for(surrogate_index in 1 : SURROGATE_N) {
   x_s <- array(0, dim=dim(x))
@@ -178,18 +179,18 @@ for(surrogate_index in 1 : SURROGATE_N) {
   test_data_bundle[surrogate_index, ] <- time_series_data
 }
 # show data
-# plot(test_data_bundle[4,], type="l", col=1, lwd=2, xlim=c(0, 212), ylim=c(0,1), xlab="time step", ylab="Normalized Value", cex.lab = 1.5)
+plot(test_data_bundle[1,], type="l", col=1, lwd=2, xlim=c(0, 212), ylim=c(0,1), xlab="time step", ylab="Normalized Value", cex.lab = 1.5)
 
 # conduct a test and calculate p value
-calculateCCMrho(Accm = Accm, Bccm = Bccm, E_A = E_A, E_B = E_B, TAU = TAU)
-for(surrogate_index in 1 : SURROGATE_N) {
-  print(calculateCCMrho(Accm = test_data_bundle[surrogate_index, ], Bccm = Bccm, E_A = E_A, E_B = E_B, TAU = TAU))
-}
-
-calculateCCMrho <- function(Accm, Bccm, E_A, E_B, TAU) {
+calculateCCMrho <- function(Accm, Bccm, Em, TAU) {
   Accm_Bccm <- data.frame(Accm=Accm, Bccm=Bccm)
-  Bccm_xmap_Accm <- ccm(Accm_Bccm, E = E_B, lib_column = "Bccm", tau = TAU,
+  Bccm_xmap_Accm <- ccm(Accm_Bccm, E = Em, lib_column = "Bccm", tau = TAU,
                         target_column = "Accm", lib_sizes = seq(10, 200, by = 10), random_libs = TRUE)
   Bccm_xmap_Accm_means <- ccm_means(Bccm_xmap_Accm)
   return (Bccm_xmap_Accm_means$rho[length(Bccm_xmap_Accm_means$rho)])
+}
+
+calculateCCMrho(Accm = Accm, Bccm = Bccm, Em = E, TAU = TAU)
+for(surrogate_index in 1 : SURROGATE_N) {
+  print(calculateCCMrho(Accm = test_data_bundle[surrogate_index, ], Bccm = Bccm, Em = E, TAU = TAU))
 }
