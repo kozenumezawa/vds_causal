@@ -64,7 +64,7 @@ sess = tf.Session()
 sess.run(init)
 summary_writer = tf.train.SummaryWriter('summary/l2_loss', graph=sess.graph)
 
-DATA_NUM = 3001
+DATA_NUM = 4001
 times = [i for i in range(TIME_STEP_2)]
 # trainning loop
 for step in range(DATA_NUM):

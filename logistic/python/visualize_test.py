@@ -48,21 +48,33 @@ plt.show()
 
 # visualize Wx
 number = [i for i in range(b1.shape[0])]
-plt.plot(number, xW[0], color='r', lw=2)
-plt.plot(number, xW[2], color='c', lw=2)
-plt.plot(number, xW[4], color='g', lw=2)
-plt.plot(number, xW[6], color='m', lw=2)
+plt.plot(number, xW[4], color='r', lw=2)
+plt.plot(number, xW[5], color='c', lw=2)
+plt.plot(number, xW[6], color='g', lw=2)
+plt.plot(number, xW[7], color='m', lw=2)
 plt.plot(number, xW[8], color='b', lw=2)
 plt.show()
 
-# 3, 8, 14, 18
+# 4, 6, 13, 16
 W = numpy.transpose(W1)
-plt.plot(times, W[8], color='g', lw=2)
-plt.plot(times, W[14], color='b', lw=2)
-print(W[3])
-print(W[8])
-print(W[14])
-plt.show()
+# print(W[16])
+# plt.plot(times, W[16], color='g', lw=2)
+# plt.plot(times, W[14], color='b', lw=2)
+# plt.show()
+
+
+# W1_eq = numpy.transpose(W1)
+# TIME_STEP = W1_eq.shape[1] / 2
+# number = [i for i in range(TIME_STEP)]
+#
+# for i in range(b1.shape[0]):
+
+# sigma = 0
+# t = 24
+# for i in range(b1.shape[0]):
+#     sigma += W1_eq[i][t-1] * W1_eq[i][TIME_STEP+t-1]
+# print(sigma)
+
 
 # visualize b1
 # plt.plot(number, b1, color='b', lw=2)
