@@ -55,53 +55,12 @@ drawCCM <- function(Accm, Bccm, Em, TAU) {
   legend(x = "topleft", legend = c("Accm xmap Bccm", "Bccm xmap Accm"), col = c("red", "blue"), lwd = 1, inset = 0.02, cex = 0.8)
 }
 
-data = fromJSON("../python/data.json")
-
-index <- 1
-Accm <- as.numeric(unlist(data$data[index,]$s))
-Bccm <- as.numeric(unlist(data$data[index,]$t))
-
-# show data
-showdata(Accm, Bccm)
-# determine Embedding Dimension
-determineEmbeddingDimension(Accm)
-determineEmbeddingDimension(Bccm)
-E <- 5
-# Prediction Decay
-predictionDeacy(data = Accm, Em = E)
-predictionDeacy(data = Bccm, Em = E)
-TAU = 1
-# Identifying Nonlinearity
-identifyingNonlinearity(data = Accm, Em = E)
-identifyingNonlinearity(data = Bccm, Em = E)
-# draw CCM
-drawCCM(Accm = Accm, Bccm = Bccm, E = E, TAU = TAU)
-
-#---twin surrogate---
+# functions for twin surrogates
 Heaviside <- function(x) {
   if (x > 0) {
     return (1)
   }
   return (0)
-}
-# create trajectory vector form attractor
-X_DIM <- E
-BACK_MAX <- (X_DIM - 1) * TAU
-X_N <- length(Accm) - BACK_MAX # length of x
-x <- array(0, dim=c(X_N, X_DIM))
-for (t in 1 : X_N) {
-  for(j in 1:X_DIM) {
-    x[t,j] <- Accm[(t + BACK_MAX) - (j - 1) * TAU]
-  }
-}
-
-# cauculate reccurrence matrix
-delta <- 0.125
-R <- array(0, dim=c(X_N, X_N))
-for (i in 1 : X_N) {
-  for(j in 1 : X_N) {
-    R[i,j] <- Heaviside(delta - max(abs(x[i,] - x[j,])))
-  }
 }
 
 checkHavingTwin <- function(i, R) {
@@ -136,6 +95,57 @@ selectTwinIndex <- function(i, R) {
   }
   random_index <- floor(runif(1, min=1, max=length(twin)+0.99999999))
   return (twin[random_index] + 1)
+}
+
+calculateCCMrho <- function(Accm, Bccm, Em, TAU) {
+  Accm_Bccm <- data.frame(Accm=Accm, Bccm=Bccm)
+  Bccm_xmap_Accm <- ccm(Accm_Bccm, E = Em, lib_column = "Bccm", tau = TAU,
+                        target_column = "Accm", lib_sizes = seq(10, 200, by = 10), random_libs = TRUE)
+  Bccm_xmap_Accm_means <- ccm_means(Bccm_xmap_Accm)
+  return (Bccm_xmap_Accm_means$rho[length(Bccm_xmap_Accm_means$rho)])
+}
+
+data = fromJSON("../python/data.json")
+
+index <- 1
+Accm <- as.numeric(unlist(data$data[index,]$s))
+Bccm <- as.numeric(unlist(data$data[index,]$t))
+
+# show data
+showdata(Accm, Bccm)
+# determine Embedding Dimension
+determineEmbeddingDimension(Accm)
+determineEmbeddingDimension(Bccm)
+E <- 5
+# Prediction Decay
+predictionDeacy(data = Accm, Em = E)
+predictionDeacy(data = Bccm, Em = E)
+TAU = 1
+# Identifying Nonlinearity
+identifyingNonlinearity(data = Accm, Em = E)
+identifyingNonlinearity(data = Bccm, Em = E)
+# draw CCM
+# drawCCM(Accm = Accm, Bccm = Bccm, E = E, TAU = TAU)
+
+#---twin surrogate---
+# create trajectory vector form attractor
+X_DIM <- E
+BACK_MAX <- (X_DIM - 1) * TAU
+X_N <- length(Accm) - BACK_MAX # length of x
+x <- array(0, dim=c(X_N, X_DIM))
+for (t in 1 : X_N) {
+  for(j in 1:X_DIM) {
+    x[t,j] <- Accm[(t + BACK_MAX) - (j - 1) * TAU]
+  }
+}
+
+# cauculate reccurrence matrix
+delta <- 0.125
+R <- array(0, dim=c(X_N, X_N))
+for (i in 1 : X_N) {
+  for(j in 1 : X_N) {
+    R[i,j] <- Heaviside(delta - max(abs(x[i,] - x[j,])))
+  }
 }
 
 # create twin surrogates data
@@ -182,17 +192,10 @@ for(surrogate_index in 1 : SURROGATE_N) {
 plot(test_data_bundle[1,], type="l", col=1, lwd=2, xlim=c(0, 212), ylim=c(0,1), xlab="time step", ylab="Normalized Value", cex.lab = 1.5)
 
 # conduct a test
-calculateCCMrho <- function(Accm, Bccm, Em, TAU) {
-  Accm_Bccm <- data.frame(Accm=Accm, Bccm=Bccm)
-  Bccm_xmap_Accm <- ccm(Accm_Bccm, E = Em, lib_column = "Bccm", tau = TAU,
-                        target_column = "Accm", lib_sizes = seq(10, 200, by = 10), random_libs = TRUE)
-  Bccm_xmap_Accm_means <- ccm_means(Bccm_xmap_Accm)
-  return (Bccm_xmap_Accm_means$rho[length(Bccm_xmap_Accm_means$rho)])
-}
-calculateCCMrho(Accm = Accm, Bccm = Bccm, Em = E, TAU = TAU)
+data_rho <- calculateCCMrho(Accm = Accm, Bccm = Bccm, Em = E, TAU = TAU)
 rho_list <- c()
 for(surrogate_index in 1 : SURROGATE_N) {
   rho_list <- c(rho_list, calculateCCMrho(Accm = test_data_bundle[surrogate_index, ], Bccm = Bccm, Em = E, TAU = TAU))
 }
-t.test(rho_list, alternative = "less", conf.level=0.95)
-
+max(rho_list)
+t.test(rho_list)
