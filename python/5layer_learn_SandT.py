@@ -7,13 +7,14 @@
 import matplotlib.pyplot as plt
 import numpy
 import tensorflow as tf
+import random
 
 def weight_variable(shape, variable_name):
     initial = tf.truncated_normal(shape, stddev=0.1)
     return tf.Variable(initial, name=variable_name)
 
 def bias_variable(shape, variable_name):
-    initial = tf.constant(0.1, shape=shape)
+    initial = tf.constant(0.5, shape=shape)
     return tf.Variable(initial, name=variable_name)
 
 def main():
@@ -27,8 +28,8 @@ def main():
         st[i, rawdata.shape[2]:] = rawdata[i, 1]          #   T(water temperature)
 
     PIXELS = data.shape[1]  # = 424
-    H1 = 200
-    H2 = 25
+    H1 = 150
+    H2 = 50
     BATCH_SIZE = 1
     DROP_OUT_RATE = 0.5
 
@@ -39,21 +40,24 @@ def main():
     h12 = tf.nn.sigmoid(tf.matmul(x, W12) + b12)
 
     keep_prob = tf.placeholder("float", name='keep_prob')
-    h_drop = tf.nn.dropout(h12, keep_prob)
+    h_drop12 = tf.nn.dropout(h12, keep_prob)
 
     W23 = weight_variable((H1, H2), 'W23')
     b23 = bias_variable([H2], 'b23')
-    h23 = tf.nn.sigmoid(tf.matmul(h12, W23) + b23)
+    h23 = tf.nn.softsign(tf.matmul(h_drop12, W23) + b23)
+    h_drop23 = tf.nn.dropout(h23, keep_prob)
 
     W34 = tf.transpose(W23)  # 転置
-    b34 = bias_variable([H1], 'b34')
-    h34 = tf.nn.sigmoid(tf.matmul(h23, W34) + b34)
+    b34 = tf.transpose(b12)
+    h34 = tf.nn.softsign(tf.matmul(h_drop23, W34) + b34)
+    h_drop34 = tf.nn.dropout(h34, keep_prob)
 
     W45 = tf.transpose(W12)  # 転置
     b45 = bias_variable([PIXELS], 'b45')
-    y = tf.nn.relu(tf.matmul(h34, W45) + b45)
+    y = tf.nn.relu(tf.matmul(h_drop34, W45) + b45)
 
-    loss = tf.nn.l2_loss(y - x) / BATCH_SIZE
+    # loss = tf.nn.l2_loss(y - x) / BATCH_SIZE
+    loss = tf.reduce_mean(tf.square(y - x) * 10000)
 
     tf.scalar_summary("l2_loss", loss)
 
@@ -64,25 +68,24 @@ def main():
     sess.run(init)
     summary_writer = tf.train.SummaryWriter('summary/l2_loss', graph=sess.graph)
 
-    for step in range(8001):
-        inputdata = numpy.array([st[step]])
+    for step in range(20001):
+        data_index = random.randint(0,10099)
+        inputdata = numpy.array([st[data_index]])
         sess.run(train_step,
                  feed_dict={x: inputdata, keep_prob: (1 - DROP_OUT_RATE)})
         summary_op = tf.merge_all_summaries()
         summary_str = sess.run(summary_op, feed_dict={x: inputdata, keep_prob: 1.0})
         summary_writer.add_summary(summary_str, step)
         if step % 100 == 0:
-            print(loss.eval(session=sess, feed_dict={x: inputdata, keep_prob: 1.0}))
+            print(step, loss.eval(session=sess, feed_dict={x: inputdata, keep_prob: 1.0}))
             times = [i for i in range(PIXELS)]
             output = y.eval(session=sess, feed_dict={x: inputdata, keep_prob: 1.0})
-        if step % 2000 == 0:
+        if step % 10000 == 0 and step != 0:
             times = [i for i in range(PIXELS)]
             output = y.eval(session=sess, feed_dict={x: inputdata, keep_prob: 1.0})
             plt.plot(times, inputdata[0], color='r', lw=2)
             plt.plot(times, output[0], color='g', lw=1)
             plt.show()
-    result = sess.run(W2)
-    numpy.save('result.npy', result)
 
 if __name__ == '__main__':
     main()
