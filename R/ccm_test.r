@@ -125,7 +125,7 @@ TAU = 1
 identifyingNonlinearity(data = Accm, Em = E)
 identifyingNonlinearity(data = Bccm, Em = E)
 # draw CCM
-# drawCCM(Accm = Accm, Bccm = Bccm, E = E, TAU = TAU)
+drawCCM(Accm = Accm, Bccm = Bccm, E = E, TAU = TAU)
 
 #---twin surrogate---
 # create trajectory vector form attractor
@@ -149,7 +149,7 @@ for (i in 1 : X_N) {
 }
 
 # create twin surrogates data
-SURROGATE_N <- 100
+SURROGATE_N <- 500
 x_s_bundle <- array(0, dim=c(SURROGATE_N, dim(x)))
 for(surrogate_index in 1 : SURROGATE_N) {
   x_s <- array(0, dim=dim(x))
