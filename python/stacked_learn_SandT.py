@@ -28,8 +28,8 @@ def main():
         st[i, rawdata.shape[2]:] = rawdata[i, 1]          #   T(water temperature)
 
     PIXELS = data.shape[1]  # = 424
-    H1 = 125
-    H2 = 50
+    H1 = 75
+    H2 = 40
     BATCH_SIZE = 1
     DROP_OUT_RATE = 0.5
 
@@ -136,16 +136,16 @@ def main():
             print(step, loss2.eval(session=sess2, feed_dict=feed_dict))
             times = [i for i in range(PIXELS)]
             output = y_2.eval(session=sess2, feed_dict=feed_dict)
-        # if step % 10000 == 0 and step != 0:
-        #     feed_dict = {
-        #         x2: inputdata,
-        #         keep_prob2: 1.0
-        #     }
-        #     times = [i for i in range(PIXELS)]
-        #     output = y_2.eval(session=sess2, feed_dict=feed_dict)
-        #     plt.plot(times, inputdata[0], color='r', lw=2)
-        #     plt.plot(times, output[0], color='g', lw=1)
-        #     plt.show()
+        if step % 10000 == 0 and step != 0:
+            feed_dict = {
+                x2: inputdata,
+                keep_prob2: 1.0
+            }
+            times = [i for i in range(PIXELS)]
+            output = y_2.eval(session=sess2, feed_dict=feed_dict)
+            plt.plot(times, inputdata[0], color='r', lw=2)
+            plt.plot(times, output[0], color='g', lw=1)
+            plt.show()
     numpy.save('../npy/result_W23.npy', sess2.run(W23))
     numpy.save('../npy/result_b23.npy', sess2.run(b23))
     numpy.save('../npy/result_W34.npy', sess2.run(W34))

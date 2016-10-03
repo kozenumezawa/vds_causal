@@ -27,7 +27,7 @@ def main():
 
     # print(st.shape) = (10100, 424)
     PIXELS = st.shape[1]  # = 424
-    H = 75
+    H = 25
     BATCH_SIZE = 1
     DROP_OUT_RATE = 0.5
 
