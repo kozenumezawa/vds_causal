@@ -14,7 +14,7 @@ def weight_variable(shape, variable_name):
     return tf.Variable(initial, name=variable_name)
 
 def bias_variable(shape, variable_name):
-    initial = tf.constant(0.5, shape=shape)
+    initial = tf.constant(0.3, shape=shape)
     return tf.Variable(initial, name=variable_name)
 
 def main():
@@ -28,7 +28,7 @@ def main():
         st[i, rawdata.shape[2]:] = rawdata[i, 1]          #   T(water temperature)
 
     PIXELS = data.shape[1]  # = 424
-    H1 = 150
+    H1 = 250
     H2 = 50
     BATCH_SIZE = 1
     DROP_OUT_RATE = 0.5
@@ -80,7 +80,7 @@ def main():
             print(step, loss.eval(session=sess, feed_dict={x: inputdata, keep_prob: 1.0}))
             times = [i for i in range(PIXELS)]
             output = y.eval(session=sess, feed_dict={x: inputdata, keep_prob: 1.0})
-        if step % 10000 == 0 and step != 0:
+        if step % 3000 == 0 and step != 0:
             times = [i for i in range(PIXELS)]
             output = y.eval(session=sess, feed_dict={x: inputdata, keep_prob: 1.0})
             plt.plot(times, inputdata[0], color='r', lw=2)
