@@ -33,120 +33,121 @@ def main():
     BATCH_SIZE = 1
     DROP_OUT_RATE = 0.5
 
-    x = tf.placeholder(tf.float32, [BATCH_SIZE, PIXELS], name='x')
+    x1 = tf.placeholder(tf.float32, [BATCH_SIZE, PIXELS], name='x1')
     # create network (1st)
     W12 = weight_variable((PIXELS, H1), 'W12')
     b12 = bias_variable([H1], 'b12')
-    h12 = tf.nn.sigmoid(tf.matmul(x, W12) + b12)
+    h12 = tf.nn.sigmoid(tf.matmul(x1, W12) + b12)
 
-    keep_prob = tf.placeholder("float", name='keep_prob')
-    h_drop12 = tf.nn.dropout(h12, keep_prob)
+    keep_prob1 = tf.placeholder("float", name='keep_prob1')
+    h_drop12 = tf.nn.dropout(h12, keep_prob1)
 
     W45 = tf.transpose(W12)  # 転置
     b45 = bias_variable([PIXELS], 'b45')
     y_1 = tf.nn.relu(tf.matmul(h_drop12, W45) + b45)
 
-    # loss = tf.nn.l2_loss(y - x) / BATCH_SIZE
-    loss = tf.reduce_mean(tf.square(y_1 - x) * 10000)
+    # loss1 = tf.nn.l2_loss(y - x) / BATCH_SIZE
+    loss1 = tf.reduce_mean(tf.square(y_1 - x1) * 10000)
 
-    train_step = tf.train.AdamOptimizer().minimize(loss)
+    train_step = tf.train.AdamOptimizer().minimize(loss1)
 
     init = tf.initialize_all_variables()
-    sess = tf.Session()
-    sess.run(init)
+    sess1 = tf.Session()
+    sess1.run(init)
 
     # first learn
-    for step in range(101):
+    for step in range(2001):
         data_index = random.randint(0,10099)
         inputdata = numpy.array([st[data_index]])
-        sess.run(train_step,
-                 feed_dict={x: inputdata, keep_prob: (1 - DROP_OUT_RATE)})
+        sess1.run(train_step,
+                 feed_dict={x1: inputdata, keep_prob1: (1 - DROP_OUT_RATE)})
         if step % 100 == 0:
-            print(step, loss.eval(session=sess, feed_dict={x: inputdata, keep_prob: 1.0}))
+            print(step, loss1.eval(session=sess1, feed_dict={x1: inputdata, keep_prob1: 1.0}))
             times = [i for i in range(PIXELS)]
-            output = y_1.eval(session=sess, feed_dict={x: inputdata, keep_prob: 1.0})
+            output = y_1.eval(session=sess1, feed_dict={x1: inputdata, keep_prob1: 1.0})
         if step % 1000 == 0 and step != 0:
             times = [i for i in range(PIXELS)]
-            output = y_1.eval(session=sess, feed_dict={x: inputdata, keep_prob: 1.0})
+            output = y_1.eval(session=sess1, feed_dict={x1: inputdata, keep_prob1: 1.0})
             plt.plot(times, inputdata[0], color='r', lw=2)
             plt.plot(times, output[0], color='g', lw=1)
             plt.show()
     # save
-    learned_W12 = sess.run(W12)
-    learned_b12 = sess.run(b12)
-    learned_W45 = sess.run(W45)
-    learned_b45 = sess.run(b45)
+    learned_W12 = sess1.run(W12)
+    learned_b12 = sess1.run(b12)
+    learned_W45 = sess1.run(W45)
+    learned_b45 = sess1.run(b45)
 
-    keep_W12 = tf.placeholder("float", name='W12')
-    keep_b12 = tf.placeholder("float", name='b12')
-    keep_W45 = tf.placeholder("float", name='W45')
-    keep_b45 = tf.placeholder("float", name='b45')
+    keep_prob2 = tf.placeholder("float", name='keep_prob2')
+    keep_W12 = tf.placeholder("float32", name='W12')
+    keep_b12 = tf.placeholder("float32", name='b12')
+    keep_W45 = tf.placeholder("float32", name='W45')
+    keep_b45 = tf.placeholder("float32", name='b45')
 
     # create network (2nd)
-    h12_2 = tf.nn.softsign(tf.matmul(x, keep_W12) + keep_b12)
+    x2 = tf.placeholder(tf.float32, [BATCH_SIZE, PIXELS], name='x2')
+    h12_2 = tf.nn.softsign(tf.matmul(x2, keep_W12) + keep_b12)
 
     W23 = weight_variable((H1, H2), 'W23')
     b23 = bias_variable([H2], 'b23')
     h23 = tf.nn.softsign(tf.matmul(h12_2, W23) + b23)
-    h_drop23 = tf.nn.dropout(h23, keep_prob)
+    h_drop23 = tf.nn.dropout(h23, keep_prob2)
 
     W34 = tf.transpose(W23)  # 転置
     b34 = bias_variable([H1], 'b12')
     h34 = tf.nn.softsign(tf.matmul(h_drop23, W34) + b34)
-    h_drop34 = tf.nn.dropout(h34, keep_prob)
+    h_drop34 = tf.nn.dropout(h34, keep_prob2)
 
     y_2 = tf.nn.relu(tf.matmul(h_drop34, keep_W45) + keep_b45)
-    loss = tf.reduce_mean(tf.square(y_2 - x) * 10000)
+    loss2 = tf.reduce_mean(tf.square(y_2 - x2) * 10000)
 
-    train_step = tf.train.AdamOptimizer().minimize(loss)
+    train_step = tf.train.AdamOptimizer().minimize(loss2)
 
     init = tf.initialize_all_variables()
-    sess = tf.Session()
-    sess.run(init)
+    sess2 = tf.Session()
+    sess2.run(init)
 
-    tf.scalar_summary("l2_loss", loss)
-    summary_writer = tf.train.SummaryWriter('summary/l2_loss', graph=sess.graph)
+    tf.scalar_summary("l2_loss", loss2)
+    summary_writer = tf.train.SummaryWriter('summary/l2_loss', graph=sess2.graph)
 
     # second learn
-    for step in range(101):
+    for step in range(2001):
         data_index = random.randint(0,10099)
         inputdata = numpy.array([st[data_index]])
         feed_dict = {
-            x: inputdata,
-            keep_prob: (1 - DROP_OUT_RATE),
+            x2: inputdata,
+            keep_prob2: (1 - DROP_OUT_RATE),
             keep_W12: learned_W12,
             keep_b12: learned_b12,
             keep_W45: learned_W45,
             keep_b45: learned_b45
         }
-        sess.run(train_step,
-                 feed_dict=feed_dict)
+        sess2.run(train_step, feed_dict=feed_dict)
         summary_op = tf.merge_all_summaries()
-        summary_str = sess.run(summary_op, feed_dict={x: inputdata, keep_prob: 1.0})
+        summary_str = sess2.run(summary_op, feed_dict=feed_dict)
         summary_writer.add_summary(summary_str, step)
         if step % 100 == 0:
             feed_dict = {
-                x: inputdata,
-                keep_prob: 1.0,
+                x2: inputdata,
+                keep_prob2: 1.0,
                 keep_W12: learned_W12,
                 keep_b12: learned_b12,
                 keep_W45: learned_W45,
                 keep_b45: learned_b45
             }
-            print(step, loss.eval(session=sess, feed_dict=feed_dict))
+            print(step, loss2.eval(session=sess2, feed_dict=feed_dict))
             times = [i for i in range(PIXELS)]
-            output = y_2.eval(session=sess, feed_dict=feed_dict)
+            output = y_2.eval(session=sess2, feed_dict=feed_dict)
         if step % 1000 == 0 and step != 0:
             feed_dict = {
-                x: inputdata,
-                keep_prob: 1.0,
+                x2: inputdata,
+                keep_prob2: 1.0,
                 keep_W12: learned_W12,
                 keep_b12: learned_b12,
                 keep_W45: learned_W45,
                 keep_b45: learned_b45
             }
             times = [i for i in range(PIXELS)]
-            output = y_2.eval(session=sess, feed_dict=feed_dict)
+            output = y_2.eval(session=sess2, feed_dict=feed_dict)
             plt.plot(times, inputdata[0], color='r', lw=2)
             plt.plot(times, output[0], color='g', lw=1)
             plt.show()
