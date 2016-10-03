@@ -28,8 +28,8 @@ def main():
         st[i, rawdata.shape[2]:] = rawdata[i, 1]          #   T(water temperature)
 
     PIXELS = data.shape[1]  # = 424
-    H1 = 170
-    H2 = 25
+    H1 = 125
+    H2 = 50
     BATCH_SIZE = 1
     DROP_OUT_RATE = 0.5
 
@@ -37,7 +37,8 @@ def main():
     # create network (1st)
     W12 = weight_variable((PIXELS, H1), 'W12')
     b12 = bias_variable([H1], 'b12')
-    h12 = tf.nn.softsign(tf.matmul(x1, W12) + b12)
+    # h12 = tf.nn.softsign(tf.matmul(x1, W12) + b12)
+    h12 = tf.matmul(x1, W12) + b12
 
     keep_prob1 = tf.placeholder("float", name='keep_prob1')
     h_drop12 = tf.nn.dropout(h12, keep_prob1)
@@ -55,12 +56,12 @@ def main():
     sess1.run(init)
 
     # first learn
-    for step in range(20001):
+    for step in range(10001):
         data_index = random.randint(0,10099)
         inputdata = numpy.array([st[data_index]])
         sess1.run(train_step1,
                  feed_dict={x1: inputdata, keep_prob1: (1 - DROP_OUT_RATE)})
-        if step % 100 == 0:
+        if step % 500 == 0:
             print(step, loss1.eval(session=sess1, feed_dict={x1: inputdata, keep_prob1: 1.0}))
             times = [i for i in range(PIXELS)]
             output = y_1.eval(session=sess1, feed_dict={x1: inputdata, keep_prob1: 1.0})
@@ -90,7 +91,8 @@ def main():
     # create network (2nd)
     x2 = tf.placeholder(tf.float32, [BATCH_SIZE, PIXELS], name='x2')
 
-    h12_2 = tf.nn.softsign(tf.matmul(x2, keep_W12) + keep_b12)
+    # h12_2 = tf.nn.softsign(tf.matmul(x2, keep_W12) + keep_b12)
+    h12_2 = tf.matmul(x2, keep_W12) + keep_b12
 
     W23 = weight_variable((H1, H2), 'W23')
     b23 = bias_variable([H2], 'b23')
@@ -115,7 +117,7 @@ def main():
     summary_writer = tf.train.SummaryWriter('summary/l2_loss', graph=sess2.graph)
 
     # second learn
-    for step in range(20001):
+    for step in range(10001):
         data_index = random.randint(0,10099)
         inputdata = numpy.array([st[data_index]])
         feed_dict = {
@@ -126,7 +128,7 @@ def main():
         # summary_op = tf.merge_all_summaries()
         # summary_str = sess2.run(summary_op, feed_dict=feed_dict)
         # summary_writer.add_summary(summary_str, step)
-        if step % 100 == 0:
+        if step % 500 == 0:
             feed_dict = {
                 x2: inputdata,
                 keep_prob2: 1.0
@@ -134,16 +136,16 @@ def main():
             print(step, loss2.eval(session=sess2, feed_dict=feed_dict))
             times = [i for i in range(PIXELS)]
             output = y_2.eval(session=sess2, feed_dict=feed_dict)
-        if step % 10000 == 0 and step != 0:
-            feed_dict = {
-                x2: inputdata,
-                keep_prob2: 1.0
-            }
-            times = [i for i in range(PIXELS)]
-            output = y_2.eval(session=sess2, feed_dict=feed_dict)
-            plt.plot(times, inputdata[0], color='r', lw=2)
-            plt.plot(times, output[0], color='g', lw=1)
-            plt.show()
+        # if step % 10000 == 0 and step != 0:
+        #     feed_dict = {
+        #         x2: inputdata,
+        #         keep_prob2: 1.0
+        #     }
+        #     times = [i for i in range(PIXELS)]
+        #     output = y_2.eval(session=sess2, feed_dict=feed_dict)
+        #     plt.plot(times, inputdata[0], color='r', lw=2)
+        #     plt.plot(times, output[0], color='g', lw=1)
+        #     plt.show()
     numpy.save('../npy/result_W23.npy', sess2.run(W23))
     numpy.save('../npy/result_b23.npy', sess2.run(b23))
     numpy.save('../npy/result_W34.npy', sess2.run(W34))
