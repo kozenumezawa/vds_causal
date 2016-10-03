@@ -35,50 +35,34 @@ for i in range(0, DATANUM):
     y_activate[i] = y_[i] / (1 + numpy.absolute(y_[i]))
     y[i] = numpy.maximum(numpy.matmul(y_activate[i], W2) + b2, 0)
 
-
-    # plt.subplot(2, 1, i+1)
-#     plt.plot(times, st[i], color='r', lw=2)
-#     plt.plot(times, y[i], color='g', lw=1)
+print(xW.shape)
+#     if i % 100 == 0:
+#         plt.plot(times, st[i], color='r', lw=2)
+#         plt.plot(times, y[i], color='g', lw=1)
 # plt.show()
 
+# plt.subplot(2, 1, i+1)
 # visualize Wx
-number = [i for i in range(b1.shape[0])]
-plt.plot(number, xW[0], color='r', lw=2)
-plt.plot(number, xW[2000], color='c', lw=2)
-plt.plot(number, xW[4000], color='g', lw=2)
-plt.plot(number, xW[6000], color='m', lw=2)
-plt.plot(number, xW[8000], color='b', lw=2)
-plt.show()
 
-number = [i for i in range(PIXELS)]
-plt.plot(number, st[0], color='r', lw=2)
-plt.plot(number, st[2000], color='c', lw=2)
-plt.plot(number, st[4000], color='g', lw=2)
-plt.plot(number, st[6000], color='m', lw=2)
-plt.plot(number, st[8000], color='b', lw=2)
-plt.show()
+# number = [i for i in range(b1.shape[0])]
+# plt.plot(number, xW[0], color='r', lw=2)
+# plt.plot(number, xW[2000], color='c', lw=2)
+# plt.plot(number, xW[4000], color='g', lw=2)
+# plt.plot(number, xW[6000], color='m', lw=2)
+# plt.plot(number, xW[8000], color='b', lw=2)
+# plt.show()
+
+# number = [i for i in range(PIXELS)]
+# plt.plot(number, st[0], color='r', lw=2)
+# plt.plot(number, st[2000], color='c', lw=2)
+# plt.plot(number, st[4000], color='g', lw=2)
+# plt.plot(number, st[6000], color='m', lw=2)
+# plt.plot(number, st[8000], color='b', lw=2)
+# plt.show()
 
 # 4, 6, 13, 16
 # W = numpy.transpose(W1)
 # print(W[16])
 # plt.plot(times, W[16], color='g', lw=2)
 # plt.plot(times, W[14], color='b', lw=2)
-# plt.show()
-
-
-# W1_eq = numpy.transpose(W1)
-# TIME_STEP = W1_eq.shape[1] / 2
-# number = [i for i in range(TIME_STEP)]
-#
-# for i in range(b1.shape[0]):
-
-# sigma = 0
-# t = 24
-# for i in range(b1.shape[0]):
-#     sigma += W1_eq[i][t-1] * W1_eq[i][TIME_STEP+t-1]
-# print(sigma)
-
-
-# visualize b1
-# plt.plot(number, b1, color='b', lw=2)
 # plt.show()

@@ -14,7 +14,7 @@ def weight_variable(shape, variable_name):
     return tf.Variable(initial, name=variable_name)
 
 def bias_variable(shape, variable_name):
-    initial = tf.constant(0.3, shape=shape)
+    initial = tf.constant(0.5, shape=shape)
     return tf.Variable(initial, name=variable_name)
 
 def main():
@@ -27,7 +27,7 @@ def main():
 
     # print(st.shape) = (10100, 424)
     PIXELS = st.shape[1]  # = 424
-    H = 75
+    H = 25
     BATCH_SIZE = 1
     DROP_OUT_RATE = 0.5
 
@@ -57,8 +57,8 @@ def main():
     sess.run(init)
     summary_writer = tf.train.SummaryWriter('summary/l2_loss', graph=sess.graph)
 
-    for step in range(4001):
-        data_index = random.randint(1,10000)
+    for step in range(20001):
+        data_index = random.randint(1,10099)
         inputdata = numpy.array([st[data_index]])
         sess.run(train_step,
                  feed_dict={x: inputdata, keep_prob: (1 - DROP_OUT_RATE)})
@@ -69,12 +69,12 @@ def main():
             print(step, loss.eval(session=sess, feed_dict={x: inputdata, keep_prob: 1.0}))
             times = [i for i in range(PIXELS)]
             output = y.eval(session=sess, feed_dict={x: inputdata, keep_prob: 1.0})
-        if step % 1000 == 0 and step != 0:
-            times = [i for i in range(PIXELS)]
-            output = y.eval(session=sess, feed_dict={x: inputdata, keep_prob: 1.0})
-            plt.plot(times, inputdata[0], color='r', lw=2)
-            plt.plot(times, output[0], color='g', lw=1)
-            plt.show()
+        # if step % 1000 == 0 and step != 0:
+        #     times = [i for i in range(PIXELS)]
+        #     output = y.eval(session=sess, feed_dict={x: inputdata, keep_prob: 1.0})
+        #     plt.plot(times, inputdata[0], color='r', lw=2)
+        #     plt.plot(times, output[0], color='g', lw=1)
+        #     plt.show()
     # write trainning result
     result_W1 = sess.run(W1)
     numpy.save('../npy/result_W1.npy', result_W1)
