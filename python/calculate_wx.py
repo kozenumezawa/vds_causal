@@ -41,28 +41,66 @@ print(xW.shape)
 #         plt.plot(times, y[i], color='g', lw=1)
 # plt.show()
 
+# 0(1) ok
+# 999(1000) ok
+# 2999(3000) x
+# 5009(5010) x
+# 6002(6003) ok
+# 7424(7425) x
+# 9000(9001) x
+# 10001(10002) ok
+# 10029(10030) x
 # plt.subplot(2, 1, i+1)
-# visualize Wx
 
-# number = [i for i in range(b1.shape[0])]
+number = [i for i in range(b1.shape[0])]
+
+# visualize xW
+plt.plot(number, xW[0], color='r', lw=2)
+plt.plot(number, xW[2999], color='g', lw=2)
+plt.plot(number, xW[5009], color='b', lw=2)
+plt.show()
+plt.plot(number, xW[6002], color='r', lw=2)
+plt.plot(number, xW[2999], color='g', lw=2)
+plt.plot(number, xW[5009], color='b', lw=2)
+plt.show()
+plt.plot(number, xW[10001], color='r', lw=2)
+plt.plot(number, xW[2999], color='g', lw=2)
+plt.plot(number, xW[5009], color='b', lw=2)
+plt.show()
+
+plt.plot(times, st[0], color='r', lw=2)
+plt.plot(times, st[2999], color='g', lw=2)
+plt.plot(times, st[5009], color='b', lw=2)
+plt.show()
+plt.plot(times, st[6002], color='r', lw=2)
+plt.plot(times, st[2999], color='g', lw=2)
+plt.plot(times, st[5009], color='b', lw=2)
+plt.show()
+plt.plot(times, st[10001], color='r', lw=2)
+plt.plot(times, st[2999], color='g', lw=2)
+plt.plot(times, st[5009], color='b', lw=2)
+plt.show()
+
+# visualize xW
 # plt.plot(number, xW[0], color='r', lw=2)
-# plt.plot(number, xW[2000], color='c', lw=2)
-# plt.plot(number, xW[4000], color='g', lw=2)
-# plt.plot(number, xW[6000], color='m', lw=2)
-# plt.plot(number, xW[8000], color='b', lw=2)
+# plt.plot(number, xW[999], color='c', lw=2)
+# plt.plot(number, xW[6002], color='g', lw=2)
+# plt.plot(number, xW[2999], color='m', lw=2)
+# plt.plot(number, xW[5009], color='b', lw=2)
 # plt.show()
 
-# number = [i for i in range(PIXELS)]
-# plt.plot(number, st[0], color='r', lw=2)
-# plt.plot(number, st[2000], color='c', lw=2)
-# plt.plot(number, st[4000], color='g', lw=2)
-# plt.plot(number, st[6000], color='m', lw=2)
-# plt.plot(number, st[8000], color='b', lw=2)
+# visualize xW
+# plt.plot(number, xW[0], color='r', lw=2)
+# plt.plot(number, xW[999], color='c', lw=2)
+# plt.plot(number, xW[6002], color='g', lw=2)
+# plt.plot(number, xW[2999], color='m', lw=2)
+# plt.plot(number, xW[5009], color='b', lw=2)
 # plt.show()
 
-# 4, 6, 13, 16
-# W = numpy.transpose(W1)
-# print(W[16])
-# plt.plot(times, W[16], color='g', lw=2)
-# plt.plot(times, W[14], color='b', lw=2)
+# visualize xW
+# plt.plot(number, xW[0], color='r', lw=2)
+# plt.plot(number, xW[999], color='c', lw=2)
+# plt.plot(number, xW[6002], color='g', lw=2)
+# plt.plot(number, xW[2999], color='m', lw=2)
+# plt.plot(number, xW[5009], color='b', lw=2)
 # plt.show()

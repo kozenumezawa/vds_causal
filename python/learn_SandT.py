@@ -27,7 +27,7 @@ def main():
 
     # print(st.shape) = (10100, 424)
     PIXELS = st.shape[1]  # = 424
-    H = 25
+    H = 75
     BATCH_SIZE = 1
     DROP_OUT_RATE = 0.5
 
@@ -57,7 +57,7 @@ def main():
     sess.run(init)
     summary_writer = tf.train.SummaryWriter('summary/l2_loss', graph=sess.graph)
 
-    for step in range(20001):
+    for step in range(3001):
         data_index = random.randint(1,10099)
         inputdata = numpy.array([st[data_index]])
         sess.run(train_step,

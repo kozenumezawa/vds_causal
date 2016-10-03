@@ -149,7 +149,7 @@ for (i in 1 : X_N) {
 }
 
 # create twin surrogates data
-SURROGATE_N <- 500
+SURROGATE_N <- 1
 x_s_bundle <- array(0, dim=c(SURROGATE_N, dim(x)))
 for(surrogate_index in 1 : SURROGATE_N) {
   x_s <- array(0, dim=dim(x))
@@ -199,3 +199,5 @@ for(surrogate_index in 1 : SURROGATE_N) {
 }
 max(rho_list)
 t.test(rho_list)
+
+write.csv(test_data_bundle, file='test.csv')
