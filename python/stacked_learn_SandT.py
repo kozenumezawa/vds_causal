@@ -28,8 +28,8 @@ def main():
         st[i, rawdata.shape[2]:] = rawdata[i, 1]          #   T(water temperature)
 
     PIXELS = data.shape[1]  # = 424
-    H1 = 200
-    H2 = 50
+    H1 = 250
+    H2 = 80
     BATCH_SIZE = 1
     DROP_OUT_RATE = 0.5
 
@@ -78,13 +78,15 @@ def main():
     learned_b45 = sess1.run(b45)
 
     keep_prob2 = tf.placeholder("float", name='keep_prob2')
-    keep_W12 = tf.placeholder("float32", name='W12')
-    keep_b12 = tf.placeholder("float32", name='b12')
-    keep_W45 = tf.placeholder("float32", name='W45')
-    keep_b45 = tf.placeholder("float32", name='b45')
+
+    keep_W12 = tf.constant(learned_W12,shape=(PIXELS, H1), dtype=tf.float32, name='keep_W12')
+    keep_b12 = tf.constant(learned_b12,shape=[H1], dtype=tf.float32, name='keep_b12')
+    keep_W45 = tf.constant(learned_W45,shape=(H1, PIXELS), dtype=tf.float32, name='keep_W45')
+    keep_b45 = tf.constant(learned_b45,shape=[PIXELS], dtype=tf.float32, name='keep_b45')
 
     # create network (2nd)
     x2 = tf.placeholder(tf.float32, [BATCH_SIZE, PIXELS], name='x2')
+
     h12_2 = tf.nn.softsign(tf.matmul(x2, keep_W12) + keep_b12)
 
     W23 = weight_variable((H1, H2), 'W23')
@@ -115,11 +117,7 @@ def main():
         inputdata = numpy.array([st[data_index]])
         feed_dict = {
             x2: inputdata,
-            keep_prob2: (1 - DROP_OUT_RATE),
-            keep_W12: learned_W12,
-            keep_b12: learned_b12,
-            keep_W45: learned_W45,
-            keep_b45: learned_b45
+            keep_prob2: (1 - DROP_OUT_RATE)
         }
         sess2.run(train_step, feed_dict=feed_dict)
         summary_op = tf.merge_all_summaries()
@@ -128,11 +126,7 @@ def main():
         if step % 100 == 0:
             feed_dict = {
                 x2: inputdata,
-                keep_prob2: 1.0,
-                keep_W12: learned_W12,
-                keep_b12: learned_b12,
-                keep_W45: learned_W45,
-                keep_b45: learned_b45
+                keep_prob2: 1.0
             }
             print(step, loss2.eval(session=sess2, feed_dict=feed_dict))
             times = [i for i in range(PIXELS)]
@@ -140,11 +134,7 @@ def main():
         if step % 1000 == 0 and step != 0:
             feed_dict = {
                 x2: inputdata,
-                keep_prob2: 1.0,
-                keep_W12: learned_W12,
-                keep_b12: learned_b12,
-                keep_W45: learned_W45,
-                keep_b45: learned_b45
+                keep_prob2: 1.0
             }
             times = [i for i in range(PIXELS)]
             output = y_2.eval(session=sess2, feed_dict=feed_dict)
