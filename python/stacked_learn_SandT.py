@@ -14,7 +14,7 @@ def weight_variable(shape, variable_name):
     return tf.Variable(initial, name=variable_name)
 
 def bias_variable(shape, variable_name):
-    initial = tf.constant(0.3, shape=shape)
+    initial = tf.constant(0.1, shape=shape)
     return tf.Variable(initial, name=variable_name)
 
 def main():
@@ -28,7 +28,7 @@ def main():
         st[i, rawdata.shape[2]:] = rawdata[i, 1]          #   T(water temperature)
 
     PIXELS = data.shape[1]  # = 424
-    H1 = 150
+    H1 = 170
     H2 = 25
     BATCH_SIZE = 1
     DROP_OUT_RATE = 0.5
@@ -55,7 +55,7 @@ def main():
     sess1.run(init)
 
     # first learn
-    for step in range(10001):
+    for step in range(20001):
         data_index = random.randint(0,10099)
         inputdata = numpy.array([st[data_index]])
         sess1.run(train_step1,
@@ -75,6 +75,10 @@ def main():
     learned_b12 = sess1.run(b12)
     learned_W45 = sess1.run(W45)
     learned_b45 = sess1.run(b45)
+    numpy.save('../npy/result_W12.npy', learned_W12)
+    numpy.save('../npy/result_b12.npy', learned_b12)
+    numpy.save('../npy/result_W45.npy', learned_W45)
+    numpy.save('../npy/result_b45.npy', learned_b45)
 
     keep_prob2 = tf.placeholder("float", name='keep_prob2')
 
@@ -111,7 +115,7 @@ def main():
     summary_writer = tf.train.SummaryWriter('summary/l2_loss', graph=sess2.graph)
 
     # second learn
-    for step in range(10001):
+    for step in range(20001):
         data_index = random.randint(0,10099)
         inputdata = numpy.array([st[data_index]])
         feed_dict = {
@@ -140,6 +144,9 @@ def main():
             plt.plot(times, inputdata[0], color='r', lw=2)
             plt.plot(times, output[0], color='g', lw=1)
             plt.show()
-
+    numpy.save('../npy/result_W23.npy', sess2.run(W23))
+    numpy.save('../npy/result_b23.npy', sess2.run(b23))
+    numpy.save('../npy/result_W34.npy', sess2.run(W34))
+    numpy.save('../npy/result_b34.npy', sess2.run(b34))
 if __name__ == '__main__':
     main()
