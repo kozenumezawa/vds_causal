@@ -54,8 +54,10 @@ t <- 1:TIMESTEP
 # show  inputdata
 X <- inputdata[1,]
 Y <- inputdata[2,]
-plot(t, X[1,], type = "l",xlim=c(0, 210), ylim=c(0,1), xlab = "Time step", ylab = "value", col = "red")
-lines(t, Y[1,], type = "l", xlab = "Time step", ylab = "value", col = "blue")
+#plot(t, X[1,], type = "l",xlim=c(0, 210), ylim=c(0,1), xlab = "t", ylab = "X(t)", col = "red")
+#lines(t, Y[1,], type = "l", xlab = "Time step", ylab = "value", col = "blue")
+plot(t, X[1,], type = "l",xlim=c(0, 210), ylim=c(0,1), xlab = "t", ylab = "X(t)", col = "red")
+plot(t, Y[1,], type = "l", xlab = "t", ylab = "Y(t)", col = "blue")
 
 Accm <- as.numeric(X)
 Bccm <- as.numeric(Y)
