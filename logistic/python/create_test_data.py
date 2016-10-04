@@ -4,7 +4,8 @@ import csv
 from math import floor
 
 
-TIMESTEP = 25
+
+TIMESTEP = 212
 
 initial = 0.1
 b = 0
@@ -21,14 +22,14 @@ while(b < 0.9):
         X.append(initial)
         Y.append(initial)
         for t in range(1, TIMESTEP):
-            X.append(X[t-1] * (3.8 - 3.8 * X[t-1] - 2 * b * Y[t-1]))
-            Y.append(Y[t-1] * (3.5 - 3.5 * Y[t-1] - 0 * X[t-1]))
+            X.append(3.9*  X[t-1] * (1 - X[t-1] - b * Y[t-1]))
+            Y.append(3.7 * Y[t-1] * (1 - Y[t-1] - 0.2 * X[t-1]))
             if(X[t] > 10000 or X[t] < -10000):
                 divergence_flag = True
-        data.append([X])
-        data.append([Y])
-        writer.writerows([X+Y])
-        f.close()
-        b = (floor(b * 10) + 1) / 10
+    data.append([X, Y])
+    writer.writerows([X])
+    writer.writerows([Y])
+    f.close()
+    b = (floor(b * 10) + 1) / 10
 npdata = np.array(data)
 np.save('../npy/input_test_data.npy', npdata)

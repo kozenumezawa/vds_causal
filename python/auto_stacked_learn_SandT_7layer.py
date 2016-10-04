@@ -31,8 +31,8 @@ for test in range(100):
         st[i, rawdata.shape[2]:] = rawdata[i, 1]          #   T(water temperature)
 
     PIXELS = data.shape[1]  # = 424
-    H1 = 200
-    H2 = 75
+    H1 = 150
+    H2 = 60
     H3 = int(30 - math.floor(test / 10))
 
     BATCH_SIZE = 1
@@ -275,15 +275,15 @@ for test in range(100):
 
     # compare xW56
     for i in range(0, b56.shape[0]):
-        ok1 = xW56[0][i]
-        ok2 = xW56[999][i]
-        ok3 = xW56[6002][i]
-        ok4 = xW56[10001][i]
+        ok1 = abs(xW56[0][i])
+        ok2 = abs(xW56[999][i])
+        ok3 = abs(xW56[6002][i])
+        ok4 = abs(xW56[10001][i])
 
-        no1 = xW56[2999][i]
-        no2 = xW56[5009][i]
-        no3 = xW56[7424][i]
-        no4 = xW56[10029][i]
+        no1 = abs(xW56[2999][i])
+        no2 = abs(xW56[5009][i])
+        no3 = abs(xW56[7424][i])
+        no4 = abs(xW56[10029][i])
         if ok1 > no1 and ok1 > no2 and ok1 > no3 and ok1 > no4 and ok2 > no1 and ok2 > no2 and ok2 > no3 and ok2 > no4 and ok3 > no1 and ok3 > no2 and ok3 > no3 and ok3 > no4 and ok4 > no1 and ok4 > no2 and ok4 > no3 and ok4 > no4:
             if ok1 > 0.4 and ok2 > 0.4 and ok3 > 0.4 and ok4 > 0.4:
                 print(i)
