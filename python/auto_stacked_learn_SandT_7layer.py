@@ -269,7 +269,7 @@ for test in range(100):
         no3 = abs(xW23[7424][i])
         no4 = abs(xW23[10029][i])
         if ok1 > no1 and ok1 > no2 and ok1 > no3 and ok1 > no4 and ok2 > no1 and ok2 > no2 and ok2 > no3 and ok2 > no4 and ok3 > no1 and ok3 > no2 and ok3 > no3 and ok3 > no4 and ok4 > no1 and ok4 > no2 and ok4 > no3 and ok4 > no4:
-            if ok1 > 0.4 and ok2 > 0.4 and ok3 > 0.4 and ok4 > 0.4:
+            if ok1 > 0.3 and ok2 > 0.3 and ok3 > 0.3 and ok4 > 0.3:
                 print(i)
                 ENDFLAG = True
 
@@ -285,7 +285,7 @@ for test in range(100):
         no3 = abs(xW56[7424][i])
         no4 = abs(xW56[10029][i])
         if ok1 > no1 and ok1 > no2 and ok1 > no3 and ok1 > no4 and ok2 > no1 and ok2 > no2 and ok2 > no3 and ok2 > no4 and ok3 > no1 and ok3 > no2 and ok3 > no3 and ok3 > no4 and ok4 > no1 and ok4 > no2 and ok4 > no3 and ok4 > no4:
-            if ok1 > 0.4 and ok2 > 0.4 and ok3 > 0.4 and ok4 > 0.4:
+            if ok1 > 0.3 and ok2 > 0.3 and ok3 > 0.3 and ok4 > 0.3:
                 print(i)
                 ENDFLAG = True
     if ENDFLAG == True:

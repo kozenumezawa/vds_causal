@@ -47,15 +47,15 @@ drawCCM <- function(Accm, Bccm, Em, TAU) {
   lines(Bccm_xmap_Accm_means$lib_size, pmax(0, Bccm_xmap_Accm_means$rho), col = "blue")
   legend(x = "topleft", legend = c("Accm xmap Bccm", "Bccm xmap Accm"), col = c("red", "blue"), lwd = 1, inset = 0.02, cex = 0.8)
 }
-inputdata <- read.csv("../csv/inputdata_b_0_8.csv", header=FALSE)
+inputdata <- read.csv("../csv/inputdata_b_0_1.csv", header=FALSE)
 TIMESTEP <- length(inputdata[1,])    # the length of X or Y 
 
 t <- 1:TIMESTEP
 # show  inputdata
 X <- inputdata[1,]
 Y <- inputdata[2,]
-plot(t, X[1,], type = "l",xlim=c(0, 50), ylim=c(0,1), xlab = "Time step", ylab = "value")
-lines(t, Y[1,], type = "l", xlab = "Time step", ylab = "value")
+plot(t, X[1,], type = "l",xlim=c(0, 210), ylim=c(0,1), xlab = "Time step", ylab = "value", col = "red")
+lines(t, Y[1,], type = "l", xlab = "Time step", ylab = "value", col = "blue")
 
 Accm <- as.numeric(X)
 Bccm <- as.numeric(Y)
@@ -63,7 +63,7 @@ Bccm <- as.numeric(Y)
 # determine Embedding Dimension
 determineEmbeddingDimension(Accm)
 determineEmbeddingDimension(Bccm)
-E <- 1
+E <- 2
 # Prediction Decay
 predictionDeacy(data = Accm, Em = E)
 predictionDeacy(data = Bccm, Em = E)
