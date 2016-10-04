@@ -14,7 +14,7 @@ def weight_variable(shape, variable_name):
     return tf.Variable(initial, name=variable_name)
 
 def bias_variable(shape, variable_name):
-    initial = tf.constant(0.1, shape=shape)
+    initial = tf.constant(0.3, shape=shape)
     return tf.Variable(initial, name=variable_name)
 
 def main():
@@ -30,7 +30,7 @@ def main():
     PIXELS = data.shape[1]  # = 424
     H1 = 300
     H2 = 100
-    H3 = 30
+    H3 = 25
     BATCH_SIZE = 1
     DROP_OUT_RATE = 0.5
 
@@ -66,7 +66,7 @@ def main():
             print(step, loss1.eval(session=sess1, feed_dict={x1: inputdata, keep_prob1: 1.0}))
             times = [i for i in range(PIXELS)]
             output = y_1.eval(session=sess1, feed_dict={x1: inputdata, keep_prob1: 1.0})
-        # if step % 1000 == 0 and step != 0:
+        # if step % 5000 == 0 and step != 0:
         #     times = [i for i in range(PIXELS)]
         #     output = y_1.eval(session=sess1, feed_dict={x1: inputdata, keep_prob1: 1.0})
         #     plt.plot(times, inputdata[0], color='r', lw=2)
@@ -196,7 +196,7 @@ def main():
             print(step, loss3.eval(session=sess3, feed_dict=feed_dict))
             times = [i for i in range(PIXELS)]
             output = y_3.eval(session=sess3, feed_dict=feed_dict)
-        if step % 10000 == 0 and step != 0:
+        if step % 5000 == 0 and step != 0:
             feed_dict = {
                 x3: inputdata,
                 keep_prob3: 1.0

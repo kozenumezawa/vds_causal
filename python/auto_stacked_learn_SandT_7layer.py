@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import numpy
 import tensorflow as tf
 import random
+import math
 
 def weight_variable(shape, variable_name):
     initial = tf.truncated_normal(shape, stddev=0.1)
@@ -30,9 +31,10 @@ for test in range(100):
         st[i, rawdata.shape[2]:] = rawdata[i, 1]          #   T(water temperature)
 
     PIXELS = data.shape[1]  # = 424
-    H1 = 100
-    H2 = 50
-    H3 = 20
+    H1 = 200
+    H2 = 75
+    H3 = int(30 - math.floor(test / 10))
+
     BATCH_SIZE = 1
     DROP_OUT_RATE = 0.5
 
@@ -256,25 +258,21 @@ for test in range(100):
         xW56[i] = numpy.matmul(y23_activate[i], W56)
 
     # compare xW23
-    # for i in range(0, b23.shape[0]):
-    #     ok1 = xW23[0][i]
-    #     ok2 = xW23[6002][i]
-    #     ok3 = xW23[10001][i]
-    #     no1 = xW23[2999][i]
-    #     no2 = xW23[5009][i]
-    #     if ok1 > no1 and ok1 > no2 and ok2 > no1 and ok2 > no2 and ok3 > no1 and ok3 > no2:
-    #         print(i)
-    #         ENDFLAG = True
+    for i in range(0, b23.shape[0]):
+        ok1 = xW23[0][i]
+        ok2 = xW23[999][i]
+        ok3 = xW23[6002][i]
+        ok4 = xW23[10001][i]
 
-# 0(1) ok
-# 999(1000) ok
-# 2999(3000) x
-# 5009(5010) x
-# 6002(6003) ok
-# 7424(7425) x
-# 9000(9001) x
-# 10001(10002) ok
-# 10029(10030) x
+        no1 = xW23[2999][i]
+        no2 = xW23[5009][i]
+        no3 = xW23[7424][i]
+        no4 = xW23[10029][i]
+        if ok1 > no1 and ok1 > no2 and ok1 > no3 and ok1 > no4 and ok2 > no1 and ok2 > no2 and ok2 > no3 and ok2 > no4 and ok3 > no1 and ok3 > no2 and ok3 > no3 and ok3 > no4 and ok4 > no1 and ok4 > no2 and ok4 > no3 and ok4 > no4:
+            if ok1 > 0.4 and ok2 > 0.4 and ok3 > 0.4 and ok4 > 0.4:
+                print(i)
+                ENDFLAG = True
+
     # compare xW56
     for i in range(0, b56.shape[0]):
         ok1 = xW56[0][i]
@@ -287,8 +285,9 @@ for test in range(100):
         no3 = xW56[7424][i]
         no4 = xW56[10029][i]
         if ok1 > no1 and ok1 > no2 and ok1 > no3 and ok1 > no4 and ok2 > no1 and ok2 > no2 and ok2 > no3 and ok2 > no4 and ok3 > no1 and ok3 > no2 and ok3 > no3 and ok3 > no4 and ok4 > no1 and ok4 > no2 and ok4 > no3 and ok4 > no4:
-            print(i)
-            ENDFLAG = True
+            if ok1 > 0.4 and ok2 > 0.4 and ok3 > 0.4 and ok4 > 0.4:
+                print(i)
+                ENDFLAG = True
     if ENDFLAG == True:
         print('yahooooo')
         break
