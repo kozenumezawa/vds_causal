@@ -102,9 +102,8 @@ def main():
     W34 = tf.transpose(W23)  # 転置
     b34 = bias_variable([H1], 'b12')
     h34 = tf.nn.softsign(tf.matmul(h_drop23, W34) + b34)
-    h_drop34 = tf.nn.dropout(h34, keep_prob2)
 
-    y_2 = tf.nn.relu(tf.matmul(h_drop34, keep_W45) + keep_b45)
+    y_2 = tf.nn.relu(tf.matmul(h34, keep_W45) + keep_b45)
     loss2 = tf.reduce_mean(tf.square(y_2 - x2) * 10000)
 
     train_step2 = tf.train.AdamOptimizer().minimize(loss2)
