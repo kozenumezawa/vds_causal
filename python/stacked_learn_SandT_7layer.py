@@ -29,7 +29,7 @@ def main():
 
     PIXELS = data.shape[1]  # = 424
     H1 = 200
-    H2 = 75
+    H2 = 50
     H3 = 25
     BATCH_SIZE = 1
     DROP_OUT_RATE = 0.5
@@ -140,10 +140,11 @@ def main():
             plt.plot(times, inputdata[0], color='r', lw=2)
             plt.plot(times, output[0], color='g', lw=1)
             plt.show()
-    learned_W23 = sess1.run(W23)
-    learned_b23 = sess1.run(b23)
-    learned_W34 = sess1.run(W34)
-    learned_b34 = sess1.run(b34)
+    # save
+    learned_W23 = sess2.run(W23)
+    learned_b23 = sess2.run(b23)
+    learned_W34 = sess2.run(W34)
+    learned_b34 = sess2.run(b34)
     numpy.save('../npy/result_W23.npy', learned_W23)
     numpy.save('../npy/result_b23.npy', learned_b23)
     numpy.save('../npy/result_W34.npy', learned_W34)
@@ -164,16 +165,16 @@ def main():
     h12_3 = tf.matmul(x3, keep_W12) + keep_b12
     h23_3 = tf.nn.softsign(tf.matmul(h12_3, keep_W23) + keep_b23)
 
-    W45 = weight_variable((H2, H3), 'W45')
-    b45 = bias_variable([H3], 'b45')
-    h45 = tf.nn.softsign(tf.matmul(h23_3, W45) + b45)
-    h_drop45 = tf.nn.dropout(h_drop45, keep_prob3)
+    W56 = weight_variable((H2, H3), 'W56')
+    b56 = bias_variable([H3], 'b56')
+    h56 = tf.nn.softsign(tf.matmul(h23_3, W56) + b56)
+    h_drop56 = tf.nn.dropout(h56, keep_prob3)
 
-    W56 = tf.transpose(W45)  # 転置
-    b56 = bias_variable([H2], 'b56')
-    h56 = tf.nn.softsign(tf.matmul(h_drop45, W56) + b56)
+    W67 = tf.transpose(W56)  # 転置
+    b67 = bias_variable([H2], 'b67')
+    h67 = tf.nn.softsign(tf.matmul(h_drop56, W67) + b67)
 
-    y_3 = tf.nn.relu(tf.nn.matmul(tf.nn.softsign(tf.matmul(h56, keep_W34) + keep_b34), keep_W45) + keep_b45)
+    y_3 = tf.nn.relu(tf.matmul(tf.nn.softsign(tf.matmul(h67, keep_W34) + keep_b34), keep_W45) + keep_b45)
     loss3 = tf.reduce_mean(tf.square(y_3 - x3) * 10000)
 
     train_step3 = tf.train.AdamOptimizer().minimize(loss3)
@@ -183,7 +184,7 @@ def main():
     sess3.run(init)
 
     tf.scalar_summary("l2_loss", loss2)
-    summary_writer = tf.train.SummaryWriter('summary/l2_loss', graph=sess2.graph)
+    summary_writer = tf.train.SummaryWriter('summary/l2_loss', graph=sess3.graph)
 
     # 3rd learn
     for step in range(10001):
@@ -215,5 +216,10 @@ def main():
             plt.plot(times, inputdata[0], color='r', lw=2)
             plt.plot(times, output[0], color='g', lw=1)
             plt.show()
+
+    numpy.save('../npy/result_W56.npy', sess3.run(W56))
+    numpy.save('../npy/result_b56.npy', sess3.run(b56))
+    numpy.save('../npy/result_W67.npy', sess3.run(W67))
+    numpy.save('../npy/result_b67.npy', sess3.run(b67))
 if __name__ == '__main__':
     main()
