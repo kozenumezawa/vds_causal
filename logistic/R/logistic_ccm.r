@@ -73,3 +73,28 @@ identifyingNonlinearity(data = Accm, Em = E)
 identifyingNonlinearity(data = Bccm, Em = E)
 # draw CCM
 drawCCM(Accm = Accm, Bccm = Bccm, E = E, TAU = TAU)
+
+# create trajectory vector for attractor
+X_DIM <- E
+BACK_MAX <- (X_DIM - 1) * TAU
+X_N <- length(Accm) - BACK_MAX # length of x
+x <- array(0, dim=c(X_N, X_DIM))
+for (t in 1 : X_N) {
+  for(j in 1:X_DIM) {
+    x[t,j] <- Accm[(t + BACK_MAX) - (j - 1) * TAU]
+  }
+}
+
+Y_DIM <- E
+BACK_MAX <- (Y_DIM - 1) * TAU
+Y_N <- length(Bccm) - BACK_MAX # length of y
+y <- array(0, dim=c(Y_N, Y_DIM))
+for (t in 1 : Y_N) {
+  for(j in 1:Y_DIM) {
+    y[t,j] <- Bccm[(t + BACK_MAX) - (j - 1) * TAU]
+  }
+}
+
+# draw attractor
+plot(x)
+plot(y)
