@@ -17,7 +17,9 @@ def bias_variable(shape, variable_name):
     initial = tf.constant(0.1, shape=shape)
     return tf.Variable(initial, name=variable_name)
 
-def main():
+for test in range(100):
+    print('---', test, '---')
+    ENDFLAG = False
     rawdata = numpy.load('ocean.normalized.npy') # rawdata.shape = (10100, 2, 212)
     data = numpy.zeros((rawdata.shape[0] * 2, rawdata.shape[2] * 2),
                        dtype=numpy.float32)
@@ -62,7 +64,7 @@ def main():
         inputdata = numpy.array([st[data_index]])
         sess1.run(train_step1,
                  feed_dict={x1: inputdata, keep_prob1: (1 - DROP_OUT_RATE)})
-        if step % 500 == 0:
+        if step % 5000 == 0:
             print(step, loss1.eval(session=sess1, feed_dict={x1: inputdata, keep_prob1: 1.0}))
             times = [i for i in range(PIXELS)]
             output = y_1.eval(session=sess1, feed_dict={x1: inputdata, keep_prob1: 1.0})
@@ -122,7 +124,7 @@ def main():
             keep_prob2: (1 - DROP_OUT_RATE)
         }
         sess2.run(train_step2, feed_dict=feed_dict)
-        if step % 500 == 0:
+        if step % 5000 == 0:
             feed_dict = {
                 x2: inputdata,
                 keep_prob2: 1.0
@@ -188,7 +190,7 @@ def main():
         # summary_op = tf.merge_all_summaries()
         # summary_str = sess2.run(summary_op, feed_dict=feed_dict)
         # summary_writer.add_summary(summary_str, step)
-        if step % 500 == 0:
+        if step % 5000 == 0:
             feed_dict = {
                 x3: inputdata,
                 keep_prob3: 1.0
@@ -196,20 +198,97 @@ def main():
             print(step, loss3.eval(session=sess3, feed_dict=feed_dict))
             times = [i for i in range(PIXELS)]
             output = y_3.eval(session=sess3, feed_dict=feed_dict)
-        if step % 10000 == 0 and step != 0:
-            feed_dict = {
-                x3: inputdata,
-                keep_prob3: 1.0
-            }
-            times = [i for i in range(PIXELS)]
-            output = y_3.eval(session=sess3, feed_dict=feed_dict)
-            plt.plot(times, inputdata[0], color='r', lw=2)
-            plt.plot(times, output[0], color='g', lw=1)
-            plt.show()
 
-    numpy.save('../npy/result_W56.npy', sess3.run(W56))
-    numpy.save('../npy/result_b56.npy', sess3.run(b56))
-    numpy.save('../npy/result_W67.npy', sess3.run(W67))
-    numpy.save('../npy/result_b67.npy', sess3.run(b67))
-if __name__ == '__main__':
-    main()
+    learned_W56 = sess3.run(W56)
+    learned_b56 = sess3.run(b56)
+    learned_W67 = sess3.run(W67)
+    learned_b67 = sess3.run(b67)
+    numpy.save('../npy/result_W56.npy', learned_W56)
+    numpy.save('../npy/result_b56.npy', learned_b56)
+    numpy.save('../npy/result_W67.npy', learned_W67)
+    numpy.save('../npy/result_b67.npy', learned_b67)
+
+
+    W12 = numpy.load('../npy/result_W12.npy')
+    b12 = numpy.load('../npy/result_b12.npy')
+    W45 = numpy.load('../npy/result_W45.npy')
+    b45 = numpy.load('../npy/result_b45.npy')
+
+    W23 = numpy.load('../npy/result_W23.npy')
+    b23 = numpy.load('../npy/result_b23.npy')
+    W34 = numpy.load('../npy/result_W34.npy')
+    b34 = numpy.load('../npy/result_b34.npy')
+
+    W56 = numpy.load('../npy/result_W56.npy')
+    b56 = numpy.load('../npy/result_b56.npy')
+    W67 = numpy.load('../npy/result_W67.npy')
+    b67 = numpy.load('../npy/result_b67.npy')
+
+    times = [i for i in range(st.shape[1])]
+    DATANUM = st.shape[0]
+
+    xW12 = numpy.zeros((DATANUM, b12.shape[0]), dtype=numpy.float32)
+    y12_ = numpy.zeros((DATANUM, b12.shape[0]), dtype=numpy.float32)
+    y12_activate = numpy.zeros((DATANUM, b12.shape[0]), dtype=numpy.float32)
+    y = numpy.zeros((DATANUM, b45.shape[0]), dtype=numpy.float32)
+
+    # visualize input and output (1st step)
+    for i in range(0, DATANUM):
+        xW12[i] = numpy.matmul(st[i], W12)
+        y12_[i] = xW12[i] + b12
+        # y12_activate[i] = y12_[i] / (1 + numpy.absolute(y12_[i]))
+        y12_activate[i] = y12_[i]
+        y[i] = numpy.maximum(numpy.matmul(y12_activate[i], W45) + b45, 0)
+
+    # visualize input and output (2nd step)
+    xW23 = numpy.zeros((DATANUM, b23.shape[0]), dtype=numpy.float32)
+    y23_ = numpy.zeros((DATANUM, b23.shape[0]), dtype=numpy.float32)
+    y23_activate = numpy.zeros((DATANUM, b23.shape[0]), dtype=numpy.float32)
+    for i in range(0, DATANUM):
+        xW23[i] = numpy.matmul(y12_activate[i], W23)
+        y23_[i] = xW23[i] + b23
+        y23_activate[i] = y23_[i] / (1 + numpy.absolute(y23_[i]))
+
+    xW56 = numpy.zeros((DATANUM, b56.shape[0]), dtype=numpy.float32)
+    y56_ = numpy.zeros((DATANUM, b56.shape[0]), dtype=numpy.float32)
+    y56_activate = numpy.zeros((DATANUM, b56.shape[0]), dtype=numpy.float32)
+    for i in range(0, DATANUM):
+        xW56[i] = numpy.matmul(y23_activate[i], W56)
+
+    # compare xW23
+    # for i in range(0, b23.shape[0]):
+    #     ok1 = xW23[0][i]
+    #     ok2 = xW23[6002][i]
+    #     ok3 = xW23[10001][i]
+    #     no1 = xW23[2999][i]
+    #     no2 = xW23[5009][i]
+    #     if ok1 > no1 and ok1 > no2 and ok2 > no1 and ok2 > no2 and ok3 > no1 and ok3 > no2:
+    #         print(i)
+    #         ENDFLAG = True
+
+# 0(1) ok
+# 999(1000) ok
+# 2999(3000) x
+# 5009(5010) x
+# 6002(6003) ok
+# 7424(7425) x
+# 9000(9001) x
+# 10001(10002) ok
+# 10029(10030) x
+    # compare xW56
+    for i in range(0, b56.shape[0]):
+        ok1 = xW56[0][i]
+        ok2 = xW56[999][i]
+        ok3 = xW56[6002][i]
+        ok4 = xW56[10001][i]
+
+        no1 = xW56[2999][i]
+        no2 = xW56[5009][i]
+        no3 = xW56[7424][i]
+        no4 = xW56[10029][i]
+        if ok1 > no1 and ok1 > no2 and ok1 > no3 and ok1 > no4 and ok2 > no1 and ok2 > no2 and ok2 > no3 and ok2 > no4 and ok3 > no1 and ok3 > no2 and ok3 > no3 and ok3 > no4 and ok4 > no1 and ok4 > no2 and ok4 > no3 and ok4 > no4:
+            print(i)
+            ENDFLAG = True
+    if ENDFLAG == True:
+        print('yahooooo')
+        break
