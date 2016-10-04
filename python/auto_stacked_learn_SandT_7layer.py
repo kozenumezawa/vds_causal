@@ -259,15 +259,15 @@ for test in range(100):
 
     # compare xW23
     for i in range(0, b23.shape[0]):
-        ok1 = xW23[0][i]
-        ok2 = xW23[999][i]
-        ok3 = xW23[6002][i]
-        ok4 = xW23[10001][i]
+        ok1 = abs(xW23[0][i])
+        ok2 = abs(xW23[999][i])
+        ok3 = abs(xW23[6002][i])
+        ok4 = abs(xW23[10001][i])
 
-        no1 = xW23[2999][i]
-        no2 = xW23[5009][i]
-        no3 = xW23[7424][i]
-        no4 = xW23[10029][i]
+        no1 = abs(xW23[2999][i])
+        no2 = abs(xW23[5009][i])
+        no3 = abs(xW23[7424][i])
+        no4 = abs(xW23[10029][i])
         if ok1 > no1 and ok1 > no2 and ok1 > no3 and ok1 > no4 and ok2 > no1 and ok2 > no2 and ok2 > no3 and ok2 > no4 and ok3 > no1 and ok3 > no2 and ok3 > no3 and ok3 > no4 and ok4 > no1 and ok4 > no2 and ok4 > no3 and ok4 > no4:
             if ok1 > 0.4 and ok2 > 0.4 and ok3 > 0.4 and ok4 > 0.4:
                 print(i)
