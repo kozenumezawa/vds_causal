@@ -15,7 +15,7 @@ def weight_variable(shape, variable_name):
     return tf.Variable(initial, name=variable_name)
 
 def bias_variable(shape, variable_name):
-    initial = tf.constant(0.1, shape=shape)
+    initial = tf.constant(0.8, shape=shape)
     return tf.Variable(initial, name=variable_name)
 
 for test in range(500):
@@ -31,7 +31,7 @@ for test in range(500):
         st[i, rawdata.shape[2]:] = rawdata[i, 1]          #   T(water temperature)
 
     PIXELS = data.shape[1]  # = 424
-    H1 = 280
+    H1 = 200
     H2 = 110
     H3 = int(70 - math.floor(test / 10))
 
@@ -42,8 +42,8 @@ for test in range(500):
     # create network (1st)
     W12 = weight_variable((PIXELS, H1), 'W12')
     b12 = bias_variable([H1], 'b12')
-    # h12 = tf.nn.softsign(tf.matmul(x1, W12) + b12)
-    h12 = tf.matmul(x1, W12) + b12
+    h12 = tf.nn.softsign(tf.matmul(x1, W12) + b12)
+    # h12 = tf.matmul(x1, W12) + b12
 
     keep_prob1 = tf.placeholder("float", name='keep_prob1')
     h_drop12 = tf.nn.dropout(h12, keep_prob1)
@@ -70,12 +70,12 @@ for test in range(500):
             print(step, loss1.eval(session=sess1, feed_dict={x1: inputdata, keep_prob1: 1.0}))
             times = [i for i in range(PIXELS)]
             output = y_1.eval(session=sess1, feed_dict={x1: inputdata, keep_prob1: 1.0})
-        # if step % 10000 == 0 and step != 0:
-        #     times = [i for i in range(PIXELS)]
-        #     output = y_1.eval(session=sess1, feed_dict={x1: inputdata, keep_prob1: 1.0})
-        #     plt.plot(times, inputdata[0], color='r', lw=2)
-        #     plt.plot(times, output[0], color='g', lw=1)
-        #     plt.show()
+        if step % 10000 == 0 and step != 0:
+            times = [i for i in range(PIXELS)]
+            output = y_1.eval(session=sess1, feed_dict={x1: inputdata, keep_prob1: 1.0})
+            plt.plot(times, inputdata[0], color='r', lw=2)
+            plt.plot(times, output[0], color='g', lw=1)
+            plt.show()
     # save
     learned_W12 = sess1.run(W12)
     learned_b12 = sess1.run(b12)
@@ -97,7 +97,7 @@ for test in range(500):
     x2 = tf.placeholder(tf.float32, [BATCH_SIZE, PIXELS], name='x2')
 
     # h12_2 = tf.nn.softsign(tf.matmul(x2, keep_W12) + keep_b12)
-    h12_2 = tf.matmul(x2, keep_W12) + keep_b12
+    h12_2 = tf.nn.softsign(tf.matmul(x2, keep_W12) + keep_b12)
 
     W23 = weight_variable((H1, H2), 'W23')
     b23 = bias_variable([H2], 'b23')
@@ -108,8 +108,8 @@ for test in range(500):
     b34 = bias_variable([H1], 'b12')
     h34 = tf.nn.softsign(tf.matmul(h_drop23, W34) + b34)
 
-    y_2 = tf.nn.relu(tf.matmul(h34, keep_W45) + keep_b45)
-    loss2 = tf.reduce_mean(tf.square(y_2 - x2) * 10000)
+    y_2 = h34
+    loss2 = tf.reduce_mean(tf.square(y_2 - h12_2) * 10000)
 
     train_step2 = tf.train.AdamOptimizer().minimize(loss2)
 
@@ -132,8 +132,18 @@ for test in range(500):
                 keep_prob2: 1.0
             }
             print(step, loss2.eval(session=sess2, feed_dict=feed_dict))
-            times = [i for i in range(PIXELS)]
+        if step % 10000 == 0 and step != 0:
+            feed_dict = {
+                x2: inputdata,
+                keep_prob2: 1.0
+            }
+            times = [i for i in range(H1)]
             output = y_2.eval(session=sess2, feed_dict=feed_dict)
+            print(inputdata.shape)
+            print(output.shape)
+            plt.plot(times, inputdata[0], color='r', lw=2)
+            plt.plot(times, output[0], color='g', lw=1)
+        plt.show()
     # save
     learned_W23 = sess2.run(W23)
     learned_b23 = sess2.run(b23)
@@ -155,8 +165,7 @@ for test in range(500):
     # create network (3rd)
     x3 = tf.placeholder(tf.float32, [BATCH_SIZE, PIXELS], name='x3')
 
-    # h12_2 = tf.nn.softsign(tf.matmul(x2, keep_W12) + keep_b12)
-    h12_3 = tf.matmul(x3, keep_W12) + keep_b12
+    h12_3 = tf.nn.softsign(tf.matmul(x3, keep_W12) + keep_b12)
     h23_3 = tf.nn.softsign(tf.matmul(h12_3, keep_W23) + keep_b23)
 
     W56 = weight_variable((H2, H3), 'W56')
@@ -168,8 +177,9 @@ for test in range(500):
     b67 = bias_variable([H2], 'b67')
     h67 = tf.nn.softsign(tf.matmul(h_drop56, W67) + b67)
 
-    y_3 = tf.nn.relu(tf.matmul(tf.nn.softsign(tf.matmul(h67, keep_W34) + keep_b34), keep_W45) + keep_b45)
-    loss3 = tf.reduce_mean(tf.square(y_3 - x3) * 10000)
+    y_3 = h67
+    # y_3 = tf.nn.relu(tf.matmul(tf.nn.softsign(tf.matmul(h67, keep_W34) + keep_b34), keep_W45) + keep_b45)
+    loss3 = tf.reduce_mean(tf.square(y_3 - h23_3) * 10000)
 
     train_step3 = tf.train.AdamOptimizer().minimize(loss3)
 
@@ -198,18 +208,16 @@ for test in range(500):
                 keep_prob3: 1.0
             }
             print(step, loss3.eval(session=sess3, feed_dict=feed_dict))
-            times = [i for i in range(PIXELS)]
+        if step % 10000 == 0 and step != 0:
+            feed_dict = {
+                x3: inputdata,
+                keep_prob3: 1.0
+            }
+            times = [i for i in range(H2)]
             output = y_3.eval(session=sess3, feed_dict=feed_dict)
-        # if step % 10000 == 0 and step != 0:
-        #     feed_dict = {
-        #         x3: inputdata,
-        #         keep_prob3: 1.0
-        #     }
-        #     times = [i for i in range(PIXELS)]
-        #     output = y_3.eval(session=sess3, feed_dict=feed_dict)
-        #     plt.plot(times, inputdata[0], color='r', lw=2)
-        #     plt.plot(times, output[0], color='g', lw=1)
-        #     plt.show()
+            plt.plot(times, inputdata[0], color='r', lw=2)
+            plt.plot(times, output[0], color='g', lw=1)
+            plt.show()
 
     learned_W56 = sess3.run(W56)
     learned_b56 = sess3.run(b56)
