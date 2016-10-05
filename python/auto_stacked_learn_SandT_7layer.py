@@ -18,7 +18,7 @@ def bias_variable(shape, variable_name):
     initial = tf.constant(0.1, shape=shape)
     return tf.Variable(initial, name=variable_name)
 
-for test in range(100):
+for test in range(500):
     print('---', test, '---')
     ENDFLAG = False
     rawdata = numpy.load('ocean.normalized.npy') # rawdata.shape = (10100, 2, 212)
@@ -31,9 +31,9 @@ for test in range(100):
         st[i, rawdata.shape[2]:] = rawdata[i, 1]          #   T(water temperature)
 
     PIXELS = data.shape[1]  # = 424
-    H1 = 190
-    H2 = 85
-    H3 = int(50 - math.floor(test / 10))
+    H1 = 280
+    H2 = 110
+    H3 = int(70 - math.floor(test / 10))
 
     BATCH_SIZE = 1
     DROP_OUT_RATE = 0.5
@@ -70,12 +70,12 @@ for test in range(100):
             print(step, loss1.eval(session=sess1, feed_dict={x1: inputdata, keep_prob1: 1.0}))
             times = [i for i in range(PIXELS)]
             output = y_1.eval(session=sess1, feed_dict={x1: inputdata, keep_prob1: 1.0})
-        if step % 10000 == 0 and step != 0:
-            times = [i for i in range(PIXELS)]
-            output = y_1.eval(session=sess1, feed_dict={x1: inputdata, keep_prob1: 1.0})
-            plt.plot(times, inputdata[0], color='r', lw=2)
-            plt.plot(times, output[0], color='g', lw=1)
-            plt.show()
+        # if step % 10000 == 0 and step != 0:
+        #     times = [i for i in range(PIXELS)]
+        #     output = y_1.eval(session=sess1, feed_dict={x1: inputdata, keep_prob1: 1.0})
+        #     plt.plot(times, inputdata[0], color='r', lw=2)
+        #     plt.plot(times, output[0], color='g', lw=1)
+        #     plt.show()
     # save
     learned_W12 = sess1.run(W12)
     learned_b12 = sess1.run(b12)
@@ -126,14 +126,14 @@ for test in range(100):
             keep_prob2: (1 - DROP_OUT_RATE)
         }
         sess2.run(train_step2, feed_dict=feed_dict)
-        # if step % 5000 == 0:
-        #     feed_dict = {
-        #         x2: inputdata,
-        #         keep_prob2: 1.0
-        #     }
-        #     print(step, loss2.eval(session=sess2, feed_dict=feed_dict))
-        #     times = [i for i in range(PIXELS)]
-        #     output = y_2.eval(session=sess2, feed_dict=feed_dict)
+        if step % 5000 == 0:
+            feed_dict = {
+                x2: inputdata,
+                keep_prob2: 1.0
+            }
+            print(step, loss2.eval(session=sess2, feed_dict=feed_dict))
+            times = [i for i in range(PIXELS)]
+            output = y_2.eval(session=sess2, feed_dict=feed_dict)
     # save
     learned_W23 = sess2.run(W23)
     learned_b23 = sess2.run(b23)
@@ -304,7 +304,7 @@ for test in range(100):
         # no3 = xW56[7424][i]
         # no4 = xW56[10029][i]
         if ok1 > no1 and ok1 > no2 and ok1 > no3 and ok1 > no4 and ok2 > no1 and ok2 > no2 and ok2 > no3 and ok2 > no4 and ok3 > no1 and ok3 > no2 and ok3 > no3 and ok3 > no4 and ok4 > no1 and ok4 > no2 and ok4 > no3 and ok4 > no4:
-            if ok1 > 0.3 and ok2 > 0.3 and ok3 > 0.3 and ok4 > 0.3:
+            if ok1 > 0.4 and ok2 > 0.4 and ok3 > 0.4 and ok4 > 0.4:
                 if ok1 - no1 > 0.1 and ok2 - no1 > 0.1 and ok3 - no1 > 0.1 and ok4 - no1 > 0.1:
                     print(i)
                     ENDFLAG = True
