@@ -15,7 +15,7 @@ def weight_variable(shape, variable_name):
     return tf.Variable(initial, name=variable_name)
 
 def bias_variable(shape, variable_name):
-    initial = tf.constant(0.4, shape=shape)
+    initial = tf.constant(0.7, shape=shape)
     return tf.Variable(initial, name=variable_name)
 
 for test in range(500):
@@ -184,29 +184,21 @@ for test in range(500):
     for step in range(10001):
         data_index = random.randint(0,10099)
         inputdata = numpy.array([st[data_index]])
-        feed_dict = {
-            x3: inputdata,
-            keep_prob3: 1.0
-        }
-        sess3.run(train_step3, feed_dict=feed_dict)
+        sess3.run(train_step3, feed_dict={ x3: inputdata, keep_prob3: (1 - DROP_OUT_RATE) })
         # summary_op = tf.merge_all_summaries()
         # summary_str = sess2.run(summary_op, feed_dict=feed_dict)
         # summary_writer.add_summary(summary_str, step)
         if step % 5000 == 0:
-            feed_dict = {
-                x3: inputdata,
-                keep_prob3: 1.0
-            }
-            print(step, loss3.eval(session=sess3, feed_dict=feed_dict))
+            print(step, loss3.eval(session=sess3, feed_dict={ x3: inputdata, keep_prob3: 1.0 }))
             times = [i for i in range(PIXELS)]
-            output = y_3.eval(session=sess3, feed_dict=feed_dict)
+            output = y_3.eval(session=sess3, feed_dict={ x3: inputdata, keep_prob3: 1.0 })
         # if step % 10000 == 0 and step != 0:
         #     feed_dict = {
         #         x3: inputdata,
         #         keep_prob3: 1.0
         #     }
         #     times = [i for i in range(PIXELS)]
-        #     output = y_3.eval(session=sess3, feed_dict=feed_dict)
+        #     output = y_3.eval(session=sess3, feed_dict={ x3: inputdata, keep_prob3: 1.0 })
         #     plt.plot(times, inputdata[0], color='r', lw=2)
         #     plt.plot(times, output[0], color='g', lw=1)
         #     plt.show()
@@ -304,7 +296,7 @@ for test in range(500):
         no3 = xW56[7424][i]
         no4 = xW56[10029][i]
         if ok1 > no1 and ok1 > no2 and ok1 > no3 and ok1 > no4 and ok2 > no1 and ok2 > no2 and ok2 > no3 and ok2 > no4 and ok3 > no1 and ok3 > no2 and ok3 > no3 and ok3 > no4 and ok4 > no1 and ok4 > no2 and ok4 > no3 and ok4 > no4:
-            if ok1 > 0.4 and ok2 > 0.4 and ok3 > 0.4 and ok4 > 0.4:
+            if ok1 > 0.3 and ok2 > 0.3 and ok3 > 0.3 and ok4 > 0.3:
                 if ok1 - no1 > 0.1 and ok2 - no1 > 0.1 and ok3 - no1 > 0.1 and ok4 - no1 > 0.1:
                     print(i)
                     ENDFLAG = True

@@ -15,10 +15,10 @@ def weight_variable(shape, variable_name):
     return tf.Variable(initial, name=variable_name)
 
 def bias_variable(shape, variable_name):
-    initial = tf.constant(0.7, shape=shape)
+    initial = tf.constant(0.1, shape=shape)
     return tf.Variable(initial, name=variable_name)
 
-for test in range(500):
+for test in range(5000):
     print('---', test, '---')
     ENDFLAG = False
     rawdata = numpy.load('ocean.normalized.npy') # rawdata.shape = (10100, 2, 212)
@@ -34,9 +34,9 @@ for test in range(500):
         ts[i, rawdata.shape[2]:] = rawdata[i, 0]          #   S(salinity)
 
     PIXELS = data.shape[1]  # = 424
-    H1 = 210
+    H1 = 220
     H2 = 90
-    H3 = int(50 - math.floor(test / 10))
+    H3 = int(65 - math.floor(test / 10))
 
     BATCH_SIZE = 1
     DROP_OUT_RATE = 0.5
@@ -229,16 +229,16 @@ for test in range(500):
             print(step, loss3.eval(session=sess3, feed_dict=feed_dict))
             times = [i for i in range(PIXELS)]
             output = y_3.eval(session=sess3, feed_dict=feed_dict)
-        if step % 10000 == 0 and step != 0:
-            feed_dict = {
-                x3: inputdata,
-                keep_prob3: 1.0
-            }
-            times = [i for i in range(PIXELS)]
-            output = y_3.eval(session=sess3, feed_dict=feed_dict)
-            plt.plot(times, inputdata[0], color='r', lw=2)
-            plt.plot(times, output[0], color='g', lw=1)
-            plt.show()
+        # if step % 10000 == 0 and step != 0:
+        #     feed_dict = {
+        #         x3: inputdata,
+        #         keep_prob3: 1.0
+        #     }
+        #     times = [i for i in range(PIXELS)]
+        #     output = y_3.eval(session=sess3, feed_dict=feed_dict)
+        #     plt.plot(times, inputdata[0], color='r', lw=2)
+        #     plt.plot(times, output[0], color='g', lw=1)
+        #     plt.show()
         data_index = random.randint(0,10099)
         inputdata = numpy.array([ts[data_index]])
         feed_dict = {
@@ -254,16 +254,16 @@ for test in range(500):
             print(step, loss3.eval(session=sess3, feed_dict=feed_dict))
             times = [i for i in range(PIXELS)]
             output = y_3.eval(session=sess3, feed_dict=feed_dict)
-        if step % 10000 == 0 and step != 0:
-            feed_dict = {
-                x3: inputdata,
-                keep_prob3: 1.0
-            }
-            times = [i for i in range(PIXELS)]
-            output = y_3.eval(session=sess3, feed_dict=feed_dict)
-            plt.plot(times, inputdata[0], color='r', lw=2)
-            plt.plot(times, output[0], color='g', lw=1)
-            plt.show()
+        # if step % 10000 == 0 and step != 0:
+        #     feed_dict = {
+        #         x3: inputdata,
+        #         keep_prob3: 1.0
+        #     }
+        #     times = [i for i in range(PIXELS)]
+        #     output = y_3.eval(session=sess3, feed_dict=feed_dict)
+        #     plt.plot(times, inputdata[0], color='r', lw=2)
+        #     plt.plot(times, output[0], color='g', lw=1)
+        #     plt.show()
     learned_W56 = sess3.run(W56)
     learned_b56 = sess3.run(b56)
     learned_W67 = sess3.run(W67)
@@ -357,7 +357,7 @@ for test in range(500):
         no3 = xW56[7424][i]
         no4 = xW56[10029][i]
         if ok1 > no1 and ok1 > no2 and ok1 > no3 and ok1 > no4 and ok2 > no1 and ok2 > no2 and ok2 > no3 and ok2 > no4 and ok3 > no1 and ok3 > no2 and ok3 > no3 and ok3 > no4 and ok4 > no1 and ok4 > no2 and ok4 > no3 and ok4 > no4:
-            if ok1 > 0.4 and ok2 > 0.4 and ok3 > 0.4 and ok4 > 0.4:
+            if ok1 > 0.3 and ok2 > 0.3 and ok3 > 0.3 and ok4 > 0.3:
                 if ok1 - no1 > 0.1 and ok2 - no1 > 0.1 and ok3 - no1 > 0.1 and ok4 - no1 > 0.1:
                     print(i)
                     ENDFLAG = True

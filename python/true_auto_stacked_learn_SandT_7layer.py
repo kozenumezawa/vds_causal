@@ -132,18 +132,18 @@ for test in range(500):
                 keep_prob2: 1.0
             }
             print(step, loss2.eval(session=sess2, feed_dict=feed_dict))
-        if step % 10000 == 0 and step != 0:
-            feed_dict = {
-                x2: inputdata,
-                keep_prob2: 1.0
-            }
-            times = [i for i in range(H1)]
-            output = y_2.eval(session=sess2, feed_dict=feed_dict)
-            print(inputdata.shape)
-            print(output.shape)
-            plt.plot(times, inputdata[0], color='r', lw=2)
-            plt.plot(times, output[0], color='g', lw=1)
-        plt.show()
+        # if step % 10000 == 0 and step != 0:
+        #     feed_dict = {
+        #         x2: inputdata,
+        #         keep_prob2: 1.0
+        #     }
+        #     times = [i for i in range(H1)]
+        #     output = y_2.eval(session=sess2, feed_dict=feed_dict)
+        #     print(inputdata.shape)
+        #     print(output.shape)
+        #     plt.plot(times, inputdata[0], color='r', lw=2)
+        #     plt.plot(times, output[0], color='g', lw=1)
+        # plt.show()
     # save
     learned_W23 = sess2.run(W23)
     learned_b23 = sess2.run(b23)
@@ -208,16 +208,16 @@ for test in range(500):
                 keep_prob3: 1.0
             }
             print(step, loss3.eval(session=sess3, feed_dict=feed_dict))
-        if step % 10000 == 0 and step != 0:
-            feed_dict = {
-                x3: inputdata,
-                keep_prob3: 1.0
-            }
-            times = [i for i in range(H2)]
-            output = y_3.eval(session=sess3, feed_dict=feed_dict)
-            plt.plot(times, inputdata[0], color='r', lw=2)
-            plt.plot(times, output[0], color='g', lw=1)
-            plt.show()
+        # if step % 10000 == 0 and step != 0:
+        #     feed_dict = {
+        #         x3: inputdata,
+        #         keep_prob3: 1.0
+        #     }
+        #     times = [i for i in range(H2)]
+        #     output = y_3.eval(session=sess3, feed_dict=feed_dict)
+        #     plt.plot(times, inputdata[0], color='r', lw=2)
+        #     plt.plot(times, output[0], color='g', lw=1)
+        #     plt.show()
 
     learned_W56 = sess3.run(W56)
     learned_b56 = sess3.run(b56)
