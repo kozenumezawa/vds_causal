@@ -86,9 +86,19 @@ for i in range(0, DATANUM):
     y[i] = numpy.maximum(numpy.matmul(y34_activate[i], W45) + b45, 0)
 
 times = [i for i in range(PIXELS)]
+plt.plot(times, st[10001], color='r', lw=2)
+plt.plot(times, y[10001], color='g', lw=1)
+plt.show()
+plt.plot(times, st[999], color='r', lw=2)
+plt.plot(times, y[999], color='g', lw=1)
+plt.show()
 plt.plot(times, st[0], color='r', lw=2)
 plt.plot(times, y[0], color='g', lw=1)
 plt.show()
+# for i in range(0, DATANUM):
+#     plt.plot(times, st, color='r', lw=2)
+#     plt.plot(times, y, color='g', lw=1)
+# plt.show()
 
 # 0(1) ok
 # 999(1000) ok
@@ -102,36 +112,36 @@ plt.show()
 
 
 # visualize xW12
-number = [i for i in range(b12.shape[0])]
-plt.subplot(3, 1, 1)
-plt.plot(number, xW12[0], color='r', lw=2)
-plt.plot(number, xW12[2999], color='g', lw=2)
-plt.plot(number, xW12[5009], color='b', lw=2)
-plt.subplot(3, 1, 2)
-plt.plot(number, xW12[6002], color='r', lw=2)
-plt.plot(number, xW12[2999], color='g', lw=2)
-plt.plot(number, xW12[5009], color='b', lw=2)
-plt.subplot(3, 1, 3)
-plt.plot(number, xW12[10001], color='r', lw=2)
-plt.plot(number, xW12[2999], color='g', lw=2)
-plt.plot(number, xW12[5009], color='b', lw=2)
-plt.show()
+# number = [i for i in range(b12.shape[0])]
+# plt.subplot(3, 1, 1)
+# plt.plot(number, xW12[0], color='r', lw=2)
+# plt.plot(number, xW12[2999], color='g', lw=2)
+# plt.plot(number, xW12[5009], color='b', lw=2)
+# plt.subplot(3, 1, 2)
+# plt.plot(number, xW12[6002], color='r', lw=2)
+# plt.plot(number, xW12[2999], color='g', lw=2)
+# plt.plot(number, xW12[5009], color='b', lw=2)
+# plt.subplot(3, 1, 3)
+# plt.plot(number, xW12[10001], color='r', lw=2)
+# plt.plot(number, xW12[2999], color='g', lw=2)
+# plt.plot(number, xW12[5009], color='b', lw=2)
+# plt.show()
 
 # visualize xW23
-number = [i for i in range(b23.shape[0])]
-plt.subplot(3, 1, 1)
-plt.plot(number, xW23[0], color='r', lw=2)
-plt.plot(number, xW23[2999], color='g', lw=2)
-plt.plot(number, xW23[5009], color='b', lw=2)
-plt.subplot(3, 1, 2)
-plt.plot(number, xW23[6002], color='r', lw=2)
-plt.plot(number, xW23[2999], color='g', lw=2)
-plt.plot(number, xW23[5009], color='b', lw=2)
-plt.subplot(3, 1, 3)
-plt.plot(number, xW23[10001], color='r', lw=2)
-plt.plot(number, xW23[2999], color='g', lw=2)
-plt.plot(number, xW23[5009], color='b', lw=2)
-plt.show()
+# number = [i for i in range(b23.shape[0])]
+# plt.subplot(3, 1, 1)
+# plt.plot(number, xW23[0], color='r', lw=2)
+# plt.plot(number, xW23[2999], color='g', lw=2)
+# plt.plot(number, xW23[5009], color='b', lw=2)
+# plt.subplot(3, 1, 2)
+# plt.plot(number, xW23[6002], color='r', lw=2)
+# plt.plot(number, xW23[2999], color='g', lw=2)
+# plt.plot(number, xW23[5009], color='b', lw=2)
+# plt.subplot(3, 1, 3)
+# plt.plot(number, xW23[10001], color='r', lw=2)
+# plt.plot(number, xW23[2999], color='g', lw=2)
+# plt.plot(number, xW23[5009], color='b', lw=2)
+# plt.show()
 
 # visualize xW56
 number = [i for i in range(b56.shape[0])]
@@ -151,7 +161,7 @@ plt.show()
 
 
 plt.subplot(3, 1, 1)
-plt.plot(number, xW56[0], color='r', lw=2)
+plt.plot(number, xW56[999], color='r', lw=2)
 plt.plot(number, xW56[7424], color='g', lw=2)
 plt.plot(number, xW56[10029], color='b', lw=2)
 plt.subplot(3, 1, 2)

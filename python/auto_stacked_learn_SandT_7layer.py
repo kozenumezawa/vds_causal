@@ -31,9 +31,9 @@ for test in range(500):
         st[i, rawdata.shape[2]:] = rawdata[i, 1]          #   T(water temperature)
 
     PIXELS = data.shape[1]  # = 424
-    H1 = 210
-    H2 = 90
-    H3 = int(50 - math.floor(test / 10))
+    H1 = 300
+    H2 = 200
+    H3 = int(70 - math.floor(test / 10))
 
     BATCH_SIZE = 1
     DROP_OUT_RATE = 0.5
