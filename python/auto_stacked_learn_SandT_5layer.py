@@ -31,8 +31,8 @@ for test in range(500):
         st[i, rawdata.shape[2]:] = rawdata[i, 1]          #   T(water temperature)
 
     PIXELS = data.shape[1]  # = 424
-    H1 = 300
-    H2 = int(70 - math.floor(test / 10))
+    H1 = 280
+    H2 = int(80 - math.floor(test / 10))
 
     BATCH_SIZE = 1
     DROP_OUT_RATE = 0.5
@@ -49,7 +49,7 @@ for test in range(500):
 
     W45 = tf.transpose(W12)  # 転置
     b45 = bias_variable([PIXELS], 'b45')
-    y_1 = tf.nn.relu(tf.matmul(h_drop12, W45) + b45)
+    y_1 = tf.matmul(h_drop12, W45) + b45
 
     # loss1 = tf.nn.l2_loss(y - x) / BATCH_SIZE
     loss1 = tf.reduce_mean(tf.square(y_1 - x1) * 10000)
@@ -107,7 +107,7 @@ for test in range(500):
     b34 = bias_variable([H1], 'b12')
     h34 = tf.nn.softsign(tf.matmul(h_drop23, W34) + b34)
 
-    y_2 = tf.nn.relu(tf.matmul(h34, keep_W45) + keep_b45)
+    y_2 = tf.matmul(h34, keep_W45) + keep_b45
     loss2 = tf.reduce_mean(tf.square(y_2 - x2) * 10000)
 
     train_step2 = tf.train.AdamOptimizer().minimize(loss2)
@@ -167,7 +167,6 @@ for test in range(500):
         y12_[i] = xW12[i] + b12
         # y12_activate[i] = y12_[i] / (1 + numpy.absolute(y12_[i]))
         y12_activate[i] = y12_[i]
-        y[i] = numpy.maximum(numpy.matmul(y12_activate[i], W45) + b45, 0)
 
     # visualize input and output (2nd step)
     xW23 = numpy.zeros((DATANUM, b23.shape[0]), dtype=numpy.float32)
@@ -175,20 +174,18 @@ for test in range(500):
     y23_activate = numpy.zeros((DATANUM, b23.shape[0]), dtype=numpy.float32)
     for i in range(0, DATANUM):
         xW23[i] = numpy.matmul(y12_activate[i], W23)
-        y23_[i] = xW23[i] + b23
-        y23_activate[i] = y23_[i] / (1 + numpy.absolute(y23_[i]))
 
     # compare xW23
     for i in range(0, b23.shape[0]):
-        # ok1 = abs(xW56[0][i])
-        # ok2 = abs(xW56[999][i])
-        # ok3 = abs(xW56[6002][i])
-        # ok4 = abs(xW56[10001][i])
+        # ok1 = abs(xW23[0][i])
+        # ok2 = abs(xW23[999][i])
+        # ok3 = abs(xW23[6002][i])
+        # ok4 = abs(xW23[10001][i])
         #
-        # no1 = abs(xW56[2999][i])
-        # no2 = abs(xW56[5009][i])
-        # no3 = abs(xW56[7424][i])
-        # no4 = abs(xW56[10029][i])
+        # no1 = abs(xW23[2999][i])
+        # no2 = abs(xW23[5009][i])
+        # no3 = abs(xW23[7424][i])
+        # no4 = abs(xW23[10029][i])
         ok1 = xW23[0][i]
         ok2 = xW23[999][i]
         ok3 = xW23[6002][i]
