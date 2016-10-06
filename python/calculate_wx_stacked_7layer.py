@@ -36,7 +36,6 @@ DATANUM = st.shape[0]
 xW12 = numpy.zeros((DATANUM, b12.shape[0]), dtype=numpy.float32)
 y12_ = numpy.zeros((DATANUM, b12.shape[0]), dtype=numpy.float32)
 y12_activate = numpy.zeros((DATANUM, b12.shape[0]), dtype=numpy.float32)
-y = numpy.zeros((DATANUM, b45.shape[0]), dtype=numpy.float32)
 
 # visualize input and output (1st step)
 for i in range(0, DATANUM):
@@ -44,8 +43,6 @@ for i in range(0, DATANUM):
     y12_[i] = xW12[i] + b12
     # y12_activate[i] = y12_[i] / (1 + numpy.absolute(y12_[i]))
     y12_activate[i] = y12_[i]
-    y[i] = numpy.maximum(numpy.matmul(y12_activate[i], W45) + b45, 0)
-
 
 # visualize input and output (2nd step)
 xW23 = numpy.zeros((DATANUM, b23.shape[0]), dtype=numpy.float32)
@@ -56,16 +53,42 @@ for i in range(0, DATANUM):
     y23_[i] = xW23[i] + b23
     y23_activate[i] = y23_[i] / (1 + numpy.absolute(y23_[i]))
 
+# 3rd step
 xW56 = numpy.zeros((DATANUM, b56.shape[0]), dtype=numpy.float32)
 y56_ = numpy.zeros((DATANUM, b56.shape[0]), dtype=numpy.float32)
 y56_activate = numpy.zeros((DATANUM, b56.shape[0]), dtype=numpy.float32)
 for i in range(0, DATANUM):
     xW56[i] = numpy.matmul(y23_activate[i], W56)
+    y56_[i] = xW56[i] + b56
+    y56_activate[i] = y56_[i] / (1 + numpy.absolute(y56_[i]))
 
-#     if i % 100 == 0:
-#         plt.plot(times, st[i], color='r', lw=2)
-#         plt.plot(times, y[i], color='g', lw=1)
-# plt.show()
+# 4th step
+xW67 = numpy.zeros((DATANUM, b23.shape[0]), dtype=numpy.float32)
+y67_ = numpy.zeros((DATANUM, b23.shape[0]), dtype=numpy.float32)
+y67_activate = numpy.zeros((DATANUM, b23.shape[0]), dtype=numpy.float32)
+for i in range(0, DATANUM):
+    xW67[i] = numpy.matmul(y56_activate[i], W67)
+    y67_[i] = xW67[i] + b67
+    y67_activate[i] = y67_[i] / (1 + numpy.absolute(y67_[i]))
+
+# 5th step
+xW34 = numpy.zeros((DATANUM, b12.shape[0]), dtype=numpy.float32)
+y34_ = numpy.zeros((DATANUM, b12.shape[0]), dtype=numpy.float32)
+y34_activate = numpy.zeros((DATANUM, b12.shape[0]), dtype=numpy.float32)
+for i in range(0, DATANUM):
+    xW34[i] = numpy.matmul(y67_activate[i], W34)
+    y34_[i] = xW34[i] + b34
+    y34_activate[i] = y34_[i] / (1 + numpy.absolute(y34_[i]))
+
+# 6th step
+y = numpy.zeros((DATANUM, b45.shape[0]), dtype=numpy.float32)
+for i in range(0, DATANUM):
+    y[i] = numpy.maximum(numpy.matmul(y34_activate[i], W45) + b45, 0)
+
+times = [i for i in range(PIXELS)]
+plt.plot(times, st[0], color='r', lw=2)
+plt.plot(times, y[0], color='g', lw=1)
+plt.show()
 
 # 0(1) ok
 # 999(1000) ok
@@ -144,5 +167,5 @@ plt.show()
 # search specific neuron output
 y_ = numpy.zeros((DATANUM), dtype=numpy.float32)
 for i in range(DATANUM):
-    y_[i] = xW56[i][56]
+    y_[i] = xW56[i][26]
 print(numpy.argmax(y_))
