@@ -12,13 +12,19 @@ pydap.lib.CACHE = '/tmp/pydap-cache/'
 # pydap.lib.PROXY = httplib2.ProxyInfo(socks.PROXY_TYPE_HTTP,
 #                                      'proxy.kuins.net', 8080)
 
-url = 'http://dias:akaika0530@dias-tb2.tkl.iis.u-tokyo.ac.jp:10080/'\
-        'thredds/dodsC/DIAS/MOVE-RA2014?'\
-        'S[2122:2333][0][152:252][332:431],'\
-        'T[2122:2333][0][152:252][332:431],'\
-        'U[2122:2333][0][152:252][332:431],'\
-        'V[2122:2333][0][152:252][332:431],'\
-        'W[2122:2333][0][152:252][332:431]'
+
+#url = 'http://dias:akaika0530@dias-tb2.tkl.iis.u-tokyo.ac.jp:10080/'\
+url = 'http://133.3.250.177/'\
+        # 'thredds/dodsC/DIAS/MOVE-RA2014?'\
+        'thredds/dodsC/fora-agg?'\
+        'so[2122:2333][0][152:252][332:431],'\
+        'to[2122:2333][0][152:252][332:431]'
+        # 'S[2122:2333][0][152:252][332:431],'\
+        # 'T[2122:2333][0][152:252][332:431],'\
+        # 'U[2122:2333][0][152:252][332:431],'\
+        # 'V[2122:2333][0][152:252][332:431],'\
+        # 'W[2122:2333][0][152:252][332:431]'
+
 dataset = open_url(url)
 
 print(dataset.T.shape)
@@ -61,4 +67,4 @@ for i in range(shape[2]):
         result[index, 0, :] = S[:, 0, i, j]
         result[index, 1, :] = T[:, 0, i, j]
         result[index, 2, :] = X[:, 0, i, j]
-numpy.save('ocean.normalized.npy', result)
+numpy.save('normalized_ocean.npy', result)
