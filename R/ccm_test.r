@@ -3,7 +3,7 @@ library(jsonlite)
 library(multispatialCCM)
 
 showdata <- function(Accm, Bccm) {
-  plot(Accm, type="l", col=1, lwd=2, xlim=c(0, 212), ylim=c(0,1), xlab="time step", ylab="Normalized Value", cex.lab = 1.5)
+  plot(Accm, type="l", col=1, lwd=2, xlim=c(0, 212), ylim=c(0.3,1.3), xlab="time step", ylab="Normalized Value", cex.lab = 1.5)
   lines(Bccm, type="l", col=2, lty=2, lwd=2, cex.lab = 1.5)
   legend("topleft", c("Salinity", "Temprature"), cex=1.5, lty=c(1,2), col=c(1,2), lwd=2, bty="n")
 }
@@ -12,7 +12,7 @@ determineEmbeddingDimension <- function(data) {
   lib <- c(1, 50)
   pred <- c(90, 212)  
   simplex_output <- simplex(data, lib, pred)
-  plot(simplex_output$E, simplex_output$rho, type = "l", xlab = "Embedding Dimension (E)", ylab = "Forecast Skill (rho)")
+  plot(simplex_output$E, simplex_output$rho, ylim=c(0,1), type = "l", xlab = "Embedding Dimension (E)", ylab = "Forecast Skill (rho)")
   
   max_index <- 1
   max <- simplex_output$rho[1]
@@ -30,7 +30,7 @@ predictionDeacy <- function(data, Em) {
   pred <- c(90, 212)  
   simplex_output <- simplex(data, lib, pred, E = Em, tp = 1:10)
   par(mar = c(4, 4, 1, 1))
-  plot(simplex_output$tp, simplex_output$rho, type = "l", xlab = "Time to Prediction (tp)", ylab = "Forecast Skill (rho)")
+  plot(simplex_output$tp, simplex_output$rho, ylim=c(0,1), type = "l", xlab = "Time to Prediction (tp)", ylab = "Forecast Skill (rho)")
 }
 
 identifyingNonlinearity <- function(data, Em) {
@@ -107,7 +107,12 @@ calculateCCMrho <- function(Accm, Bccm, Em, TAU) {
 
 data = fromJSON("../python/data.json")
 
-index <- 1
+index <- 389
+# index <- 7425
+#index <- 3000
+#index <- 6003
+#index <- 10002
+# index <- 1
 Accm <- as.numeric(unlist(data$data[index,]$s))
 Bccm <- as.numeric(unlist(data$data[index,]$t))
 
@@ -116,7 +121,7 @@ showdata(Accm, Bccm)
 # determine Embedding Dimension
 determineEmbeddingDimension(Accm)
 determineEmbeddingDimension(Bccm)
-E <- 5
+E <- 2
 # Prediction Decay
 predictionDeacy(data = Accm, Em = E)
 predictionDeacy(data = Bccm, Em = E)
@@ -124,6 +129,7 @@ TAU = 1
 # Identifying Nonlinearity
 identifyingNonlinearity(data = Accm, Em = E)
 identifyingNonlinearity(data = Bccm, Em = E)
+
 # draw CCM
 drawCCM(Accm = Accm, Bccm = Bccm, E = E, TAU = TAU)
 
@@ -149,7 +155,7 @@ for (i in 1 : X_N) {
 }
 
 # create twin surrogates data
-SURROGATE_N <- 1
+SURROGATE_N <- 20
 x_s_bundle <- array(0, dim=c(SURROGATE_N, dim(x)))
 for(surrogate_index in 1 : SURROGATE_N) {
   x_s <- array(0, dim=dim(x))
