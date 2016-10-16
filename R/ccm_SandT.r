@@ -40,7 +40,7 @@ drawCCM <- function(CCM_boot_A, CCM_boot_B) {
 
 data = fromJSON("../python/data.json")
 
-index <- 1
+index <- 9951
 Accm <- as.numeric(unlist(data$data[index,]$s))
 Bccm <- as.numeric(unlist(data$data[index,]$t))
 
@@ -50,7 +50,7 @@ showdata(Accm, Bccm)
 determineEmbeddingDimension(Accm)
 E_A = 2
 determineEmbeddingDimension(Bccm)
-E_B = 5
+E_B = 2
 # Prediction Decay
 predictionDeacy(data = Accm, Em = E_A)
 predictionDeacy(data = Bccm, Em = E_B)
