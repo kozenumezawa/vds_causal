@@ -5,17 +5,16 @@ from math import exp
 
 data = []
 DATA_NUM = 5000
-TIMESTEP = 25
+TIMESTEP = 212
 
-initial = 0.1
+initial = 0.2
 
 for i in range(0, DATA_NUM):
     #   Create one pair of time series data by using Logistic Equation
     divergence_flag = True
     while(divergence_flag):
         divergence_flag = False
-        b = random.random()
-
+        b = random.randint(0,100)
         X = []
         Y = []
         #X.append(random.random())   #   initial value
@@ -23,8 +22,8 @@ for i in range(0, DATA_NUM):
         X.append(initial)
         Y.append(initial)
         for t in range(1, TIMESTEP):
-            X.append(X[t-1] * (3.8 - 3.8 * X[t-1] - 2 * b * Y[t-1]))
-            Y.append(Y[t-1] * (3.5 - 3.5 * Y[t-1] - 0 * X[t-1]))
+            X.append(3.9 * X[t-1] * (1 - X[t-1] - b / 1000.0 * Y[t-1]))
+            Y.append(3.7 * Y[t-1] * (1 - Y[t-1] - 0 * X[t-1]))
             if(X[t] > 10000 or X[t] < -10000):
                 divergence_flag = True
     data.append([X, Y])
