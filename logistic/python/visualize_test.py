@@ -5,7 +5,7 @@ import numpy
 import tensorflow as tf
 
 # load test data
-testrawdata = numpy.load('../npy/input_test_data.npy')
+testrawdata = numpy.load('../npy/test_data.npy')
 testdata = numpy.zeros((testrawdata.shape[0], testrawdata.shape[2] * testrawdata.shape[1]), dtype=numpy.float32)
 for i in range(testrawdata.shape[0]):
     testdata[i,:testrawdata.shape[2]] = testrawdata[i, 0]       #   X
@@ -40,10 +40,6 @@ for i in range(0, DATANUM):
     y_[i] = xW[i] + b1
     y_activate[i] = y_[i] / (1 + numpy.absolute(y_[i]))
     y[i] = numpy.maximum(numpy.matmul(y_activate[i], W2) + b2, 0)
-
-    plt.subplot(9, 1, i+1)
-    plt.plot(times, testdata[i], color='r', lw=2)
-    plt.plot(times, y[i], color='g', lw=1)
 plt.show()
 
 # visualize Wx
