@@ -3,6 +3,8 @@
 import matplotlib.pyplot as plt
 import numpy
 import tensorflow as tf
+import csv
+import random
 
 rawdata = numpy.load('ocean.normalized.npy') # rawdata.shape = (10100, 2, 212)
 data = numpy.zeros((rawdata.shape[0] * 2, rawdata.shape[2] * 2), dtype=numpy.float32)
@@ -86,96 +88,118 @@ for i in range(0, DATANUM):
     y[i] = numpy.maximum(numpy.matmul(y34_activate[i], W45) + b45, 0)
 
 times = [i for i in range(PIXELS)]
-plt.plot(times, st[10001], color='r', lw=2)
-plt.plot(times, y[10001], color='g', lw=1)
-plt.show()
-plt.plot(times, st[999], color='r', lw=2)
-plt.plot(times, y[999], color='g', lw=1)
-plt.show()
-plt.plot(times, st[0], color='r', lw=2)
-plt.plot(times, y[0], color='g', lw=1)
-plt.show()
+# plt.plot(times, st[6002], color='r', lw=2)
+# plt.show()
+# plt.plot(times, y[6002], color='g', lw=1)
+# plt.show()
+# plt.plot(times, st[999], color='r', lw=2)
+# plt.plot(times, y[999], color='g', lw=1)
+# plt.show()
+# plt.plot(times, st[0], color='r', lw=2)
+# plt.plot(times, y[0], color='g', lw=1)
+# plt.show()
 # for i in range(0, DATANUM):
-#     plt.plot(times, st, color='r', lw=2)
-#     plt.plot(times, y, color='g', lw=1)
+#     plt.plot(times, st[i], color='r', lw=2)
+#     plt.plot(times, y[i], color='g', lw=1)
 # plt.show()
 
 # 0(1) ok
 # 999(1000) ok
+# 6002(6003) ok
+# 10001(10002) ok
+# 2(3) ok
+
 # 2999(3000) x
 # 5009(5010) x
-# 6002(6003) ok
 # 7424(7425) x
 # 9000(9001) x
-# 10001(10002) ok
 # 10029(10030) x
-
-
-# visualize xW12
-# number = [i for i in range(b12.shape[0])]
-# plt.subplot(3, 1, 1)
-# plt.plot(number, xW12[0], color='r', lw=2)
-# plt.plot(number, xW12[2999], color='g', lw=2)
-# plt.plot(number, xW12[5009], color='b', lw=2)
-# plt.subplot(3, 1, 2)
-# plt.plot(number, xW12[6002], color='r', lw=2)
-# plt.plot(number, xW12[2999], color='g', lw=2)
-# plt.plot(number, xW12[5009], color='b', lw=2)
-# plt.subplot(3, 1, 3)
-# plt.plot(number, xW12[10001], color='r', lw=2)
-# plt.plot(number, xW12[2999], color='g', lw=2)
-# plt.plot(number, xW12[5009], color='b', lw=2)
-# plt.show()
-
-# visualize xW23
-# number = [i for i in range(b23.shape[0])]
-# plt.subplot(3, 1, 1)
-# plt.plot(number, xW23[0], color='r', lw=2)
-# plt.plot(number, xW23[2999], color='g', lw=2)
-# plt.plot(number, xW23[5009], color='b', lw=2)
-# plt.subplot(3, 1, 2)
-# plt.plot(number, xW23[6002], color='r', lw=2)
-# plt.plot(number, xW23[2999], color='g', lw=2)
-# plt.plot(number, xW23[5009], color='b', lw=2)
-# plt.subplot(3, 1, 3)
-# plt.plot(number, xW23[10001], color='r', lw=2)
-# plt.plot(number, xW23[2999], color='g', lw=2)
-# plt.plot(number, xW23[5009], color='b', lw=2)
-# plt.show()
+# 7424(7425) x
+# 2009(2010) x
 
 # visualize xW56
 number = [i for i in range(b56.shape[0])]
-plt.subplot(3, 1, 1)
-plt.plot(number, xW56[0], color='r', lw=2)
-plt.plot(number, xW56[2999], color='g', lw=2)
-plt.plot(number, xW56[5009], color='b', lw=2)
-plt.subplot(3, 1, 2)
-plt.plot(number, xW56[6002], color='r', lw=2)
-plt.plot(number, xW56[2999], color='g', lw=2)
-plt.plot(number, xW56[5009], color='b', lw=2)
-plt.subplot(3, 1, 3)
-plt.plot(number, xW56[10001], color='r', lw=2)
-plt.plot(number, xW56[2999], color='g', lw=2)
-plt.plot(number, xW56[5009], color='b', lw=2)
-plt.show()
-
-
-plt.subplot(3, 1, 1)
-plt.plot(number, xW56[999], color='r', lw=2)
-plt.plot(number, xW56[7424], color='g', lw=2)
-plt.plot(number, xW56[10029], color='b', lw=2)
-plt.subplot(3, 1, 2)
-plt.plot(number, xW56[6002], color='r', lw=2)
-plt.plot(number, xW56[2999], color='g', lw=2)
-plt.plot(number, xW56[5009], color='b', lw=2)
-plt.subplot(3, 1, 3)
-plt.plot(number, xW56[10001], color='r', lw=2)
-plt.plot(number, xW56[2999], color='g', lw=2)
-plt.plot(number, xW56[5009], color='b', lw=2)
-plt.show()
+# plt.subplot(3, 1, 1)
+# plt.plot(number, xW56[0], color='r', lw=2)
+# plt.plot(number, xW56[2999], color='g', lw=2)
+# plt.plot(number, xW56[5009], color='b', lw=2)
+# plt.subplot(3, 1, 2)
+# plt.plot(number, xW56[6002], color='r', lw=2)
+# plt.plot(number, xW56[2999], color='g', lw=2)
+# plt.plot(number, xW56[5009], color='b', lw=2)
+# plt.subplot(3, 1, 3)
+# plt.plot(number, xW56[10001], color='r', lw=2)
+# plt.plot(number, xW56[2999], color='g', lw=2)
+# plt.plot(number, xW56[5009], color='b', lw=2)
+# plt.show()
+# # for hitachi
+# print(xW56[2][26])
+# print(xW56[7424][26])
+# print(xW56[2009][26])
+# print(b12.shape[0])
+# print(b23.shape[0])
+# print(b56.shape[0])
+#
+# plt.subplot(3, 1, 1)
+# plt.plot(number, xW56[999], color='r', lw=2)
+# plt.plot(number, xW56[7424], color='g', lw=2)
+# plt.plot(number, xW56[10029], color='b', lw=2)
+# plt.subplot(3, 1, 2)
+# plt.plot(number, xW56[6002], color='r', lw=2)
+# plt.plot(number, xW56[2999], color='g', lw=2)
+# plt.plot(number, xW56[5009], color='b', lw=2)
+# plt.subplot(3, 1, 3)
+# plt.plot(number, xW56[10001], color='r', lw=2)
+# plt.plot(number, xW56[2999], color='g', lw=2)
+# plt.plot(number, xW56[5009], color='b', lw=2)
+# plt.show()
 
 # search specific neuron output
 y_ = numpy.zeros((DATANUM), dtype=numpy.float32)
 for i in range(DATANUM):
     y_[i] = xW56[i][26]
 print(numpy.argmax(y_))
+
+#   write data to make cusal volume
+N = 26
+f = open('../csv/each_point_st.csv', 'w')
+writer = csv.writer(f)
+data = [['lat', 'lon', 'value']]
+writer.writerows(data)
+
+lat = 30.0
+lon = 150.0
+for i in range(DATANUM):
+    if lat > 40.0:
+        lat = 30.0
+    if i % 100 == 98:
+        lon = 158.7
+    elif i % 100 == 99:
+        lon = 160
+    elif i % 100 == 0:
+        lon = 150
+    else:
+        lon += 0.1
+
+    writer.writerows([[lat, lon, xW56[i][N]]])
+    if i % 100 == 99:
+        lat += 0.1
+f.close()
+test = random.randint(0,10100)
+print(test)
+print(xW56[test][N])
+print(xW56[0][N])
+print(xW56[999][N])
+print(xW56[6002][N])
+print(xW56[10001][N])
+print(xW56[2][N])
+print(xW56[205][N])
+
+print(xW56[2999][N])
+print(xW56[5009][N])
+print(xW56[7424][N])
+print(xW56[9000][N])
+print(xW56[10029][N])
+print(xW56[2009][N])
+print(xW56[9950][N])
+print(xW56[9495][N])
