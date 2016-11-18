@@ -34,7 +34,7 @@ TIME_STEP_2 = inputdata.shape[1]
 
 x = tf.placeholder(tf.float32, [BATCH_SIZE, TIME_STEP_2], name='x')
 
-MIDDLE_UNIT = 20
+MIDDLE_UNIT = 30
 W1 = weight_variable((TIME_STEP_2, MIDDLE_UNIT), 'W1')
 b1 = bias_variable([MIDDLE_UNIT], 'b1')
 
@@ -64,7 +64,7 @@ sess = tf.Session()
 sess.run(init)
 summary_writer = tf.train.SummaryWriter('summary/l2_loss', graph=sess.graph)
 
-DATA_NUM = 4001
+DATA_NUM = 2001
 times = [i for i in range(TIME_STEP_2)]
 # trainning loop
 for step in range(DATA_NUM):
